@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1150</width>
-    <height>720</height>
+    <width>1286</width>
+    <height>846</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -15,6 +15,12 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1150</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="maximumSize">
    <size>
@@ -130,6 +136,12 @@
        </item>
        <item row="7" column="6">
         <widget class="QLineEdit" name="SKO3xHzLineEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -201,6 +213,12 @@
        </item>
        <item row="8" column="6">
         <widget class="QLineEdit" name="SKO3xVLineEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -209,7 +227,7 @@
        <item row="7" column="3" colspan="3">
         <widget class="QLineEdit" name="SKOHzLineEdit">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -347,6 +365,324 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
+       <item row="2" column="0">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="title">
+          <string>Текущая директория для записи</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="0" colspan="2">
+           <widget class="QLineEdit" name="directoryNameLineEdit">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="openDirectoryButton">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Открыть в проводнике</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="chooseDirectoryButton">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Выбрать директорию</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="title">
+          <string>Параллельные операции</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="parallelMesPushButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Измерить </string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="parallelMesAndSaveButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Измерить  и записать</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="parallelResetHzPushButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Сброс Hz угла</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="title">
+          <string>Запись измерений</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="startMeasuresButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Начать измерения</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="endMeasuresButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Закончить измерения</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="starThdButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Записать Зв.Т</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QGroupBox" name="masterBox">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="title">
+          <string>Мастер</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_9">
+          <item row="1" column="0">
+           <widget class="QPushButton" name="chooseFilePushButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Выбрать файл</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="performPushButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Выполнить</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="nextPushButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Далее</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="LED" name="led" native="true">
+            <property name="diameter" stdset="0">
+             <double>6.000000000000000</double>
+            </property>
+            <property name="color" stdset="0">
+             <color alpha="200">
+              <red>255</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </property>
+            <property name="state" stdset="0">
+             <bool>false</bool>
+            </property>
+            <property name="flashing" stdset="0">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="4">
+           <widget class="QPlainTextEdit" name="WizardTextEdit">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
        <item row="0" column="0" alignment="Qt::AlignHCenter">
         <widget class="QLabel" name="label_6">
          <property name="sizePolicy">
@@ -486,65 +822,17 @@
          </column>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="title">
-          <string>Текущая директория для записи</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0" colspan="2">
-           <widget class="QLineEdit" name="directoryNameLineEdit">
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="openDirectoryButton">
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Открыть в проводнике</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="chooseDirectoryButton">
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Выбрать директорию</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QGroupBox" name="groupBox_2">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="font">
           <font>
            <weight>75</weight>
@@ -554,23 +842,30 @@
          <property name="title">
           <string>Параметры измерений</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
          <property name="flat">
           <bool>false</bool>
          </property>
-         <layout class="QFormLayout" name="formLayout">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetDefaultConstraint</enum>
-          </property>
-          <property name="labelAlignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-          <property name="formAlignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="checkCompensator">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Проверять компенсатор</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_11">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -586,55 +881,10 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="label_12">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>max СКО V, сек</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLineEdit" name="SKOHzLimitLineEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="SKOVLimitLineEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_22">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -650,8 +900,33 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_12">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>max СКО V, сек</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" alignment="Qt::AlignLeft">
            <widget class="QLabel" name="label_5">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="font">
              <font>
               <weight>75</weight>
@@ -663,273 +938,55 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLineEdit" name="IncliationSKOlineEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="MesCountLineEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QCheckBox" name="checkCompensator">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Проверять компенсатор</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="title">
-          <string>Параллельные операции</string>
-         </property>
-         <property name="flat">
-          <bool>false</bool>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_7">
-          <item row="0" column="0">
-           <widget class="QPushButton" name="parallelMesPushButton">
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Измерить </string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="parallelMesAndSaveButton">
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Измерить  и записать</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0">
-           <widget class="QPushButton" name="parallelResetHzPushButton">
+           <widget class="QDoubleSpinBox" name="SKOHzLimitSpinBox">
             <property name="font">
              <font>
               <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
-            <property name="text">
-             <string>Сброс Hz угла</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QGroupBox" name="groupBox_4">
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="title">
-          <string>Запись измерений</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_8">
-          <item row="0" column="0">
-           <widget class="QPushButton" name="startMeasuresButton">
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Начать измерения</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="endMeasuresButton">
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Закончить измерения</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="starThdButton">
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Записать Зв.Т</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QGroupBox" name="masterBox">
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="title">
-          <string>Мастер</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_9">
-          <item row="1" column="0">
-           <widget class="QPushButton" name="chooseFilePushButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Выбрать файл</string>
+            <property name="maximum">
+             <double>999.000000000000000</double>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QPushButton" name="performPushButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
+           <widget class="QDoubleSpinBox" name="SKOVLimitSpinBox">
             <property name="font">
              <font>
               <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
-            <property name="text">
-             <string>Выполнить</string>
+            <property name="maximum">
+             <double>999.000000000000000</double>
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="nextPushButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
+          <item row="3" column="1">
+           <widget class="QSpinBox" name="MesCountSpinBox">
             <property name="font">
              <font>
               <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
-            <property name="mouseTracking">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Далее</string>
+            <property name="maximum">
+             <number>999</number>
             </property>
            </widget>
           </item>
-          <item row="1" column="3">
-           <widget class="LED" name="led">
-            <property name="diameter">
-             <double>6.000000000000000</double>
-            </property>
-            <property name="color">
-             <color alpha="200">
-              <red>255</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </property>
-            <property name="state">
-             <bool>false</bool>
-            </property>
-            <property name="flashing">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="4">
-           <widget class="QPlainTextEdit" name="WizardTextEdit">
+          <item row="3" column="0">
+           <widget class="QDoubleSpinBox" name="IncliationSKOSpinBox">
             <property name="font">
              <font>
               <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
-            <property name="frameShape">
-             <enum>QFrame::Box</enum>
-            </property>
-            <property name="lineWidth">
-             <number>1</number>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
+            <property name="maximum">
+             <double>999.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -1147,7 +1204,7 @@
        <item row="7" column="3" colspan="3">
         <widget class="QLineEdit" name="SKOHzLineEdit_2">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1214,7 +1271,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1150</width>
+     <width>1286</width>
      <height>21</height>
     </rect>
    </property>

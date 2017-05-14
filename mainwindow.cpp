@@ -111,16 +111,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::initializeValidators()
 {
-    QRegExp rx( "^[-0-9]*[.]{1}[0-9]*$" );
+   // QRegExp rx( "^[-0-9]*[.]{1}[0-9]*$" );
     QRegExp rxAngle("[0-3]{1}[0-9]{2} [0-9]{2} [0-9]{2}");
-    QValidator *double_validator = new QRegExpValidator(rx, this);
+ //   QValidator *double_validator = new QRegExpValidator(rx, this);
     QValidator *gms_validator = new QRegExpValidator(rxAngle, this);
 
-    ui->SKOHzLimitLineEdit->setValidator(double_validator);
-    ui->SKOVLimitLineEdit->setValidator(double_validator);
+//    ui->SKOHzLimitSpinBox->setValidator(double_validator);
+//    ui->SKOVLimitSpinBox->setValidator(double_validator);
     ui->HzAngleValueLineEdit->setValidator(gms_validator);
     ui->HzAngleValueLineEdit_2->setValidator(gms_validator);
-    ui->MesCountLineEdit->setValidator(new QIntValidator(1,1000 , this));
+//    ui->IncliationSKOSpinBox->setValidator(double_validator);
+//    ui->MesCountSpinBox->setValidator(new QIntValidator(1,1000 , this));
 }
 
 
@@ -475,20 +476,20 @@ void MainWindow::makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,
             return;
         }
 
-        quint16 count_of_measures = ui->MesCountLineEdit->text().toInt();
+        quint16 count_of_measures = ui->MesCountSpinBox->value();
         if(!count_of_measures)
         {
             text_edit->append("Задано неверное число измерений\n");
             return;
         }
 
-        double limit_SKOHz = ui->SKOHzLimitLineEdit->text().toDouble();
+        double limit_SKOHz = ui->SKOHzLimitSpinBox->value();
         if(!limit_SKOHz)
         {
             text_edit->append("Не задано предельное СКО по горизонтали\n");
             return;
         }
-        double limit_SKOV = ui->SKOVLimitLineEdit->text().toDouble();
+        double limit_SKOV = ui->SKOVLimitSpinBox->value();
         if(!limit_SKOV)
         {
             text_edit->append("Не задано предельное СКО по вертикали\n");
@@ -499,13 +500,13 @@ void MainWindow::makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,
         if(ui->checkCompensator->isChecked())
         {
 
-            if(!ui->IncliationSKOlineEdit->text().toDouble())
+            if(!ui->IncliationSKOSpinBox->value())
             {
                 text_edit->append("Не задано предельное СКО наклона\n");
                 return;
             }
 
-            if(!theodolite->checkCompensator(ui->IncliationSKOlineEdit->text().toDouble()))
+            if(!theodolite->checkCompensator(ui->IncliationSKOSpinBox->value()))
             {
                 QApplication::beep();
                 text_edit->append("Превышено предельное СКО наклона\n");
@@ -649,9 +650,9 @@ void MainWindow::parallelHandlerNosave()
         parallelConnection();
         if(theodolite_1->isConnected() && theodolite_2->isConnected())
         {
-            std::thread thd1(&MainWindow::parallelMakeMeasureUncheck,this,theodolite_1,ui->ReportComboBox,ui->MesCountLineEdit->text().toInt(), false);
+            std::thread thd1(&MainWindow::parallelMakeMeasureUncheck,this,theodolite_1,ui->ReportComboBox,ui->MesCountSpinBox->value(), false);
             thd1.detach();
-            std::thread thd2(&MainWindow::parallelMakeMeasureUncheck,this,theodolite_2,ui->ReportComboBox_2,ui->MesCountLineEdit->text().toInt(),false);
+            std::thread thd2(&MainWindow::parallelMakeMeasureUncheck,this,theodolite_2,ui->ReportComboBox_2,ui->MesCountSpinBox->value(),false);
             thd2.detach();
 
 
@@ -675,15 +676,15 @@ void MainWindow::parallelHandlerDosave()
         parallelConnection();
         if(theodolite_1->isConnected() && theodolite_2->isConnected())
         {
-            auto thd1_future = std::async(std::launch::async,&MainWindow::parralelMakeMeasureCheck,this,theodolite_1,ui->ReportComboBox,ui->MesCountLineEdit->text().toInt());
-            auto thd2_future = std::async(std::launch::async,&MainWindow::parralelMakeMeasureCheck,this,theodolite_2,ui->ReportComboBox_2,ui->MesCountLineEdit->text().toInt());
+            auto thd1_future = std::async(std::launch::async,&MainWindow::parralelMakeMeasureCheck,this,theodolite_1,ui->ReportComboBox,ui->MesCountSpinBox->value());
+            auto thd2_future = std::async(std::launch::async,&MainWindow::parralelMakeMeasureCheck,this,theodolite_2,ui->ReportComboBox_2,ui->MesCountSpinBox->value());
 
             DFTP thd1_data = thd1_future.get();
             DFTP thd2_data = thd2_future.get();
             if(!thd1_data.isEmpty() && !thd2_data.isEmpty())
             {
-                double limit_SKOHz = ui->SKOHzLimitLineEdit->text().toDouble();
-                double limit_SKOV = ui->SKOVLimitLineEdit->text().toDouble();
+                double limit_SKOHz = ui->SKOHzLimitSpinBox->value();
+                double limit_SKOV = ui->SKOVLimitSpinBox->value();
 
                 if(thd1_data.sko_hz.getSeconds()<limit_SKOHz && thd2_data.sko_hz.getSeconds()<limit_SKOHz)
                 {
@@ -749,9 +750,9 @@ void MainWindow::setDataFromThread(const DFT& data,QTextEdit* text_edit,
 
 
     text_edit->append("FACE: "+QString::number(data.measure_vector[0].getCircle()));
-    text_edit->append("Число некорректных измерений: "+QString::number(ui->MesCountLineEdit->text().toInt()-data.measure_vector.size())+"\n");
+    text_edit->append("Число некорректных измерений: "+QString::number(ui->MesCountSpinBox->value()-data.measure_vector.size())+"\n");
 
-    if(data.sko_Hz.getSeconds()>ui->SKOHzLimitLineEdit->text().toDouble() || data.sko_V.getSeconds()>ui->SKOVLimitLineEdit->text().toDouble())
+    if(data.sko_Hz.getSeconds()>ui->SKOHzLimitSpinBox->value() || data.sko_V.getSeconds()>ui->SKOVLimitSpinBox->value())
     {
         text_edit->append("Внимание! Превышено предельное СКО\n");
     }
@@ -811,14 +812,14 @@ bool MainWindow::prepareParralelMSeasure()
         return false;
     }
 
-    if(!ui->SKOHzLimitLineEdit->text().toDouble())
+    if(!ui->SKOHzLimitSpinBox->value())
     {
         ui->textEdit->append("Не задано предельное СКО по горизонтали\n");
         ui->textEdit_2->append("Не задано предельное СКО по горизонтали\n");
         return false;
     }
 
-    if(!ui->SKOVLimitLineEdit->text().toDouble())
+    if(!ui->SKOVLimitSpinBox->value())
     {
         ui->textEdit->append("Не задано предельное СКО по вертикали\n");
         ui->textEdit_2->append("Не задано предельное СКО по вертикали\n");
@@ -826,14 +827,14 @@ bool MainWindow::prepareParralelMSeasure()
     }
 
 
-    if(!ui->MesCountLineEdit->text().toInt())
+    if(!ui->MesCountSpinBox->value())
     {
         ui->textEdit->append("Задано неверное число измерений\n");
         ui->textEdit_2->append("Задано неверное число измерений\n");
         return false;
     }
 
-    if(!ui->IncliationSKOlineEdit->text().toDouble() && ui->checkCompensator->isChecked())
+    if(!ui->IncliationSKOSpinBox->value() && ui->checkCompensator->isChecked())
     {
         ui->textEdit->append("Не задано предельное СКО наклона\n");
         ui->textEdit_2->append("Не задано предельное СКО наклона\n");
@@ -854,7 +855,7 @@ void MainWindow::parallelMakeMeasureUncheck(QSharedPointer<Theodolite> theodolit
 
         if(ui->checkCompensator->isChecked())
         {
-            if(!theodolite->checkCompensator(ui->IncliationSKOlineEdit->text().toDouble()))
+            if(!theodolite->checkCompensator(ui->IncliationSKOSpinBox->value()))
             {
                 DFT data;
                 data.device_name = theodolite->objectName();
@@ -883,8 +884,8 @@ void MainWindow::parallelMakeMeasureUncheck(QSharedPointer<Theodolite> theodolit
         GMS EV_v_angle(meas_chrc.EV_v);
 
         bool sko_limit = false;
-        const double limit_SKOHz = ui->SKOHzLimitLineEdit->text().toDouble();
-        const double limit_SKOV = ui->SKOVLimitLineEdit->text().toDouble();
+        const double limit_SKOHz = ui->SKOHzLimitSpinBox->value();
+        const double limit_SKOV = ui->SKOVLimitSpinBox->value();
 
         if(sko_hz_angle.getSeconds()>limit_SKOHz || sko_v_angle.getSeconds()>limit_SKOV)
         {
@@ -940,7 +941,7 @@ DataFromThreadtoProtocol MainWindow::parralelMakeMeasureCheck(QSharedPointer<The
     if(ui->checkCompensator->isChecked())
     {
 
-        if(!theodolite->checkCompensator(ui->IncliationSKOlineEdit->text().toDouble()))
+        if(!theodolite->checkCompensator(ui->IncliationSKOSpinBox->value()))
         {
             DFT data;
             data.device_name = theodolite->objectName();
@@ -968,8 +969,8 @@ DataFromThreadtoProtocol MainWindow::parralelMakeMeasureCheck(QSharedPointer<The
     GMS EV_hz_angle(meas_chrc.EV_hz);
     GMS EV_v_angle(meas_chrc.EV_v);
 
-    const double limit_SKOHz = ui->SKOHzLimitLineEdit->text().toDouble();
-    const double limit_SKOV = ui->SKOVLimitLineEdit->text().toDouble();
+    const double limit_SKOHz = ui->SKOHzLimitSpinBox->value();
+    const double limit_SKOV = ui->SKOVLimitSpinBox->value();
 
     if(sko_hz_angle.getSeconds()>limit_SKOHz || sko_v_angle.getSeconds()>limit_SKOV)
     {
