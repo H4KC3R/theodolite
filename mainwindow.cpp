@@ -13,36 +13,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     ui->setupUi(this);
-    settings= new QSettings(QDir::currentPath()+"/"+"config.ini",QSettings::IniFormat,this);
-    qApp->setStyleSheet(
-                "QLineEdit {border: 1px solid gray;"
-                "padding: 0 4px;"
-                "selection-background-color: darkgray;}"
-
-
-                "QPushButton { border: 1px solid gray;"
-                "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                "stop: 0 #f6f7fa, stop: 1 #dadbde);"
-                "min-width: 50px;"
-                "min-height: 20px;}"
-
-                "QPushButton:pressed {"
-                "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                "stop: 0 #dadbde, stop: 1 #f6f7fa);}"
-
-                "QPushButton:flat {"
-                " border: none; /* no border for a flat push button */}"
-
-                "QPushButton:default {"
-                "border-color: navy; /* make the default button prominent */}"
-                "QPushButton#pushButton_6{width:127px}"
-
-                "QComboBox {border: 1px solid gray}"
-                "QScrollArea {border:none}"
-                "QTextEdit{border: 1px solid gray;}");
-
-
     qRegisterMetaType<DataFromThread>();
+    settings= new QSettings(QDir::currentPath()+"/"+"config.ini",QSettings::IniFormat,this);
+
+    setStyle();
 
 
     initializeValidators();
@@ -63,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->textEdit_2->append("Неверно задан путь к библиотеке Geocom\n");
     }
 
-    starThdDialog=new Dialog(this);
+    starThdDialog = new Dialog(this);
 
 
     connect(ui->openDirectoryButton,&QPushButton::clicked,this,&MainWindow::on_openDirectoryButton_clicked);
@@ -87,8 +61,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->starThdButton,&QPushButton::clicked,this,&MainWindow::on_starThdButton_clicked);
 
-    connect(ui->mesButton,&QPushButton::clicked,this,&MainWindow::makeMeasureNoSave);
-    connect(ui->mesButton_2,&QPushButton::clicked,this,&MainWindow::makeMeasureNoSave);
+    connect(ui->mesButton, &QPushButton::clicked,this, &MainWindow::makeMeasureNoSave);
+    connect(ui->mesButton_2, &QPushButton::clicked,this, &MainWindow::makeMeasureNoSave);
 
 
     connect(ui->mesAndSaveButton,&QPushButton::clicked,this,&MainWindow::makeMeasureAndSave);
@@ -104,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->chooseFilePushButton,&QPushButton::clicked,this,&MainWindow::on_chooseFilePushButton_clicked);
     connect(ui->performPushButton,&QPushButton::clicked,this,&MainWindow::on_performPushButton_clicked);
     connect(ui->nextPushButton,&QPushButton::clicked,this,&MainWindow::on_nextPushButton_clicked);
+
     loadSettings();
 
 }
@@ -111,32 +86,47 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::initializeValidators()
 {
-   // QRegExp rx( "^[-0-9]*[.]{1}[0-9]*$" );
     QRegExp rxAngle("[0-3]{1}[0-9]{2} [0-9]{2} [0-9]{2}");
- //   QValidator *double_validator = new QRegExpValidator(rx, this);
     QValidator *gms_validator = new QRegExpValidator(rxAngle, this);
-
-//    ui->SKOHzLimitSpinBox->setValidator(double_validator);
-//    ui->SKOVLimitSpinBox->setValidator(double_validator);
     ui->HzAngleValueLineEdit->setValidator(gms_validator);
     ui->HzAngleValueLineEdit_2->setValidator(gms_validator);
-//    ui->IncliationSKOSpinBox->setValidator(double_validator);
-//    ui->MesCountSpinBox->setValidator(new QIntValidator(1,1000 , this));
+
 }
 
+void MainWindow::setStyle()
+{
+    QFile file(":/sources/style.txt");
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QTextStream stream(&file);
+        qApp->setStyleSheet(stream.readAll());
+        file.close();
+    }
+}
 
 void MainWindow::initializeComboBoxes()
 {
     QStringList report_list_thd1;
     QStringList report_list_thd2;
+
     report_list_thd1<<"Теодолит №2"<<"Компенсатор"<<"Теодолит Зв"<<"Куб прибора А"<<"Куб прибора Б"<<"Куб прибора В"<<"Куб прибора Г"
                    <<"Куб прибора Д"<<"Куб стенда А"<<"Куб стенда Б"<<"Куб стенда В"<<"Куб стенда Г"
                   <<"Куб стенда Д"<<"Лекальную линейку"<<"Плоское зеркало";
+
     report_list_thd2<<"Теодолит №1"<<"Компенсатор"<<"Теодолит Зв"<<"Куб прибора А"<<"Куб прибора Б"<<"Куб прибора В"<<"Куб прибора Г"
                    <<"Куб прибора Д"<<"Куб стенда А"<<"Куб стенда Б"<<"Куб стенда В"<<"Куб стенда Г"
                   <<"Куб стенда Д"<<"Лекальную линейку"<<"Плоское зеркало";
-    ui->ReportComboBox->insertItems(0,report_list_thd1);
-    ui->ReportComboBox_2->insertItems(0,report_list_thd2);
+
+    ui->ReportComboBox->insertItems(0, report_list_thd1);
+    ui->ReportComboBox_2->insertItems(0, report_list_thd2);
+
+    QStringList comPorts;
+    for(qint32 i = COM_1;i <= COM_24;i ++)
+    {
+        comPorts.append(QString("COM_%1").arg(i + 1));
+    }
+    ui->comPortComboBox->insertItems(0, comPorts);
+    ui->comPortComboBox_2->insertItems(0, comPorts);
 }
 
 void MainWindow::initializeConnectionTable()
@@ -155,6 +145,8 @@ void MainWindow::saveSettings()
     settings->setValue("thd1_inclination",ui->HzAngleValueLineEdit->text());
     settings->setValue("thd2_inclination",ui->HzAngleValueLineEdit_2->text());
     settings->setValue("check_compensator",ui->checkCompensator->isChecked());
+    settings->setValue("thd1_port",ui->comPortComboBox->currentIndex());
+    settings->setValue("thd2_port",ui->comPortComboBox_2->currentIndex());
     settings->sync();
 }
 
@@ -167,6 +159,8 @@ void MainWindow::loadSettings()
     ui->HzAngleValueLineEdit->setText(settings->value("thd1_inclination","000 00 00").toString());
     ui->HzAngleValueLineEdit_2->setText(settings->value("thd2_inclination","000 00 00").toString());
     ui->checkCompensator->setChecked(settings->value("check_compensator","true").toBool());
+    ui->comPortComboBox->setCurrentIndex(settings->value("thd1_port","3").toInt());
+    ui->comPortComboBox_2->setCurrentIndex(settings->value("thd2_port","7").toInt());
 }
 
 
@@ -290,7 +284,7 @@ void MainWindow::on_endMeasuresButton_clicked()
     ui->textEdit->append("Измерения закончены\n");
     num_of_measures = 0;
 
-    QFile data(directory_name+protocol_filename);
+    QFile data(directory_name + protocol_filename);
     if (data.open(QFile::WriteOnly | QFile::Append | QIODevice::Text))
     {
         QTextStream out(&data);
@@ -340,7 +334,7 @@ void MainWindow::reportAboutConnection(QString message)
 
 void MainWindow::reportAboutError(QString er_message)
 {
-    if(sender()->objectName()== theodolite_1->objectName())
+    if(sender()->objectName() == theodolite_1->objectName())
     {
         ui->textEdit->append("Теодолит №1: произошла ошибка\n");
         ui->textEdit->append(er_message);
@@ -407,13 +401,12 @@ void MainWindow::connectTheodolit()
     QPushButton *pb = dynamic_cast<QPushButton*>(sender());
     if(!pb->objectName().contains("2"))
     {
-        if(theodolite_1->isConnected())
-        {
-            return;
-        }
+        if(theodolite_1->isConnected()) return;
+
         else
         {
-            if(!theodolite_1->enableConnection(COM_13))
+            COM_PORT thd1_port = static_cast <COM_PORT> (ui->comPortComboBox->currentIndex());
+            if(!theodolite_1->enableConnection(thd1_port))
             {
                 ui->textEdit->append("Подключение не удалось\n");
             }
@@ -421,13 +414,12 @@ void MainWindow::connectTheodolit()
     }
     else
     {
-        if(theodolite_2->isConnected())
-        {
-            return;
-        }
+        if(theodolite_2->isConnected())  return;
+
         else
         {
-            if(!theodolite_2->enableConnection(COM_12))
+            COM_PORT thd2_port = static_cast <COM_PORT> (ui->comPortComboBox_2->currentIndex());
+            if(!theodolite_2->enableConnection(thd2_port))
             {
                 ui->textEdit_2->append("Подключение не удалось\n");
             }
@@ -439,11 +431,13 @@ void MainWindow::connectTheodolit()
 MeasureCharacteristics MainWindow::calculateMeasureCharact(MeasuresFromTheodolite measure_vector)
 {
     MeasureCharacteristics meas_chrc;
-    auto min_max_pair = std::minmax_element(measure_vector.begin(),measure_vector.end(),[](auto &a,auto &b){return a.getHzAngle()<b.getHzAngle();});
+    auto min_max_pair = std::minmax_element(measure_vector.begin(),measure_vector.end(),
+                                            [](auto &a,auto &b){return a.getHzAngle() < b.getHzAngle();});
 
-    // если находимся в области нуля,переопределяем углы через asin(sin()), считаем среднее по "Mean of circular quantities"
+    // если находимся в области нуля(т.е разность между минимальным и максимальным углом),
+    // переопределяем углы через asin(sin()), считаем среднее по "Mean of circular quantities"
     const int max_scatter = 356;
-    if((*min_max_pair.second).getHzAngle()-(*min_max_pair.first).getHzAngle() > max_scatter)
+    if((*min_max_pair.second).getHzAngle() - (*min_max_pair.first).getHzAngle() > max_scatter)
     {
 
         meas_chrc.EV_hz = meanSkoFcn::calc_circle_mean(measure_vector,meanSkoFcn::HZ_A);
@@ -452,12 +446,12 @@ MeasureCharacteristics MainWindow::calculateMeasureCharact(MeasuresFromTheodolit
     }
     else
     {
-        meas_chrc.EV_hz=meanSkoFcn::calc_mean(measure_vector,meanSkoFcn::HZ_A);
-        meas_chrc.sko_hz=meanSkoFcn::calc_sko(measure_vector,meas_chrc.EV_hz,meanSkoFcn::HZ_A);
+        meas_chrc.EV_hz = meanSkoFcn::calc_mean(measure_vector,meanSkoFcn::HZ_A);
+        meas_chrc.sko_hz = meanSkoFcn::calc_sko(measure_vector,meas_chrc.EV_hz,meanSkoFcn::HZ_A);
     }
 
-    meas_chrc.EV_v=meanSkoFcn::calc_mean(measure_vector,meanSkoFcn::V_A);
-    meas_chrc.sko_v=meanSkoFcn::calc_sko(measure_vector,meas_chrc.EV_v,meanSkoFcn::V_A);
+    meas_chrc.EV_v = meanSkoFcn::calc_mean(measure_vector,meanSkoFcn::V_A);
+    meas_chrc.sko_v = meanSkoFcn::calc_sko(measure_vector,meas_chrc.EV_v,meanSkoFcn::V_A);
 
     return meas_chrc;
 
@@ -465,16 +459,13 @@ MeasureCharacteristics MainWindow::calculateMeasureCharact(MeasuresFromTheodolit
 
 void MainWindow::makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,QTextEdit* text_edit,QComboBox* combo_box
                              ,QLineEdit* meanHz_line_edit,QLineEdit* meanV_line_edit,QLineEdit* skoHz_line_edit
-                             ,QLineEdit* skoV_line_edit,QLineEdit*SKO3xHz_line_edit,QLineEdit*SKO3xV_line_edit)
+                             ,QLineEdit* skoV_line_edit,QLineEdit* SKO3xHz_line_edit,QLineEdit* SKO3xV_line_edit)
 
 {
     try
     {
         connectTheodolit();
-        if(!theodolite->isConnected())
-        {
-            return;
-        }
+        if(!theodolite->isConnected()) return;
 
         quint16 count_of_measures = ui->MesCountSpinBox->value();
         if(!count_of_measures)
@@ -526,7 +517,7 @@ void MainWindow::makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,
         }
         else
         {
-            measure_vector= theodolite->startMeasures(count_of_measures,THD_MES);
+            measure_vector = theodolite->startMeasures(count_of_measures,THD_MES);
         }
 
 
@@ -554,7 +545,7 @@ void MainWindow::makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,
 
 
         bool sko_limit = false;
-        if(sko_hz_angle.getSeconds()>limit_SKOHz || sko_v_angle.getSeconds()>limit_SKOV)
+        if(sko_hz_angle.getSeconds() > limit_SKOHz || sko_v_angle.getSeconds() > limit_SKOV)
         {
             QApplication::beep();
             text_edit->append("Внимание! Превышено предельное СКО\n");
@@ -654,9 +645,6 @@ void MainWindow::parallelHandlerNosave()
             thd1.detach();
             std::thread thd2(&MainWindow::parallelMakeMeasureUncheck,this,theodolite_2,ui->ReportComboBox_2,ui->MesCountSpinBox->value(),false);
             thd2.detach();
-
-
-
         }
     }
 
@@ -671,37 +659,40 @@ void MainWindow::parallelHandlerDosave()
         ui->textEdit_2->append("Измерения не начаты.");
         return;
     }
-    if(prepareParralelMSeasure())
+
+    if(prepareParralelMSeasure()) return;
+
+
+    parallelConnection();
+    if(!theodolite_1->isConnected() || !theodolite_2->isConnected()) return;
+
+    auto thd1_future = std::async(std::launch::async,&MainWindow::parralelMakeMeasureCheck,this,theodolite_1,ui->ReportComboBox,ui->MesCountSpinBox->value());
+    auto thd2_future = std::async(std::launch::async,&MainWindow::parralelMakeMeasureCheck,this,theodolite_2,ui->ReportComboBox_2,ui->MesCountSpinBox->value());
+
+    DFTP thd1_data = thd1_future.get();
+    DFTP thd2_data = thd2_future.get();
+
+    if(!thd1_data.isEmpty() && !thd2_data.isEmpty())
     {
-        parallelConnection();
-        if(theodolite_1->isConnected() && theodolite_2->isConnected())
+        double limit_SKOHz = ui->SKOHzLimitSpinBox->value();
+        double limit_SKOV = ui->SKOVLimitSpinBox->value();
+
+        if(thd1_data.sko_hz.getSeconds() < limit_SKOHz && thd2_data.sko_hz.getSeconds() < limit_SKOHz)
         {
-            auto thd1_future = std::async(std::launch::async,&MainWindow::parralelMakeMeasureCheck,this,theodolite_1,ui->ReportComboBox,ui->MesCountSpinBox->value());
-            auto thd2_future = std::async(std::launch::async,&MainWindow::parralelMakeMeasureCheck,this,theodolite_2,ui->ReportComboBox_2,ui->MesCountSpinBox->value());
-
-            DFTP thd1_data = thd1_future.get();
-            DFTP thd2_data = thd2_future.get();
-            if(!thd1_data.isEmpty() && !thd2_data.isEmpty())
+            if(thd1_data.sko_v.getSeconds() < limit_SKOV && thd2_data.sko_v.getSeconds() < limit_SKOV)
             {
-                double limit_SKOHz = ui->SKOHzLimitSpinBox->value();
-                double limit_SKOV = ui->SKOVLimitSpinBox->value();
-
-                if(thd1_data.sko_hz.getSeconds()<limit_SKOHz && thd2_data.sko_hz.getSeconds()<limit_SKOHz)
-                {
-                    if(thd1_data.sko_v.getSeconds()<limit_SKOV && thd2_data.sko_v.getSeconds()<limit_SKOV)
-                    {
-                        saveProtocolText(thd1_data.protocol_text);
-                        saveProtocolText(thd2_data.protocol_text);
-                        notePerformOfOperation(MEASURE_PARRALEL);
-
-                    }
-                }
+                saveProtocolText(thd1_data.protocol_text);
+                saveProtocolText(thd2_data.protocol_text);
+                notePerformOfOperation(MEASURE_PARRALEL);
 
             }
-
         }
 
     }
+
+
+
+
 
 }
 
@@ -780,6 +771,8 @@ void MainWindow::parallelConnection()
     {
         return;
     }
+
+
     else
     {
         if(!theodolite_1->isConnected())
@@ -877,7 +870,7 @@ void MainWindow::parallelMakeMeasureUncheck(QSharedPointer<Theodolite> theodolit
             measure_vector = theodolite->startMeasures(count_of_measures,THD_MES);
         }
 
-        MeasureCharacteristics meas_chrc=calculateMeasureCharact(measure_vector);
+        MeasureCharacteristics meas_chrc = calculateMeasureCharact(measure_vector);
         GMS sko_hz_angle(meas_chrc.sko_hz);
         GMS sko_v_angle(meas_chrc.sko_v);
         GMS EV_hz_angle(meas_chrc.EV_hz);
@@ -887,7 +880,7 @@ void MainWindow::parallelMakeMeasureUncheck(QSharedPointer<Theodolite> theodolit
         const double limit_SKOHz = ui->SKOHzLimitSpinBox->value();
         const double limit_SKOV = ui->SKOVLimitSpinBox->value();
 
-        if(sko_hz_angle.getSeconds()>limit_SKOHz || sko_v_angle.getSeconds()>limit_SKOV)
+        if(sko_hz_angle.getSeconds() > limit_SKOHz || sko_v_angle.getSeconds() > limit_SKOV)
         {
             QApplication::beep();
             sko_limit = true;
@@ -914,6 +907,7 @@ void MainWindow::parallelMakeMeasureUncheck(QSharedPointer<Theodolite> theodolit
                     +zeroPadding(EV_hz_angle.getGradus())+" "+QString::number(EV_hz_angle.getMinutes())+" "+QString::number(EV_hz_angle.getSeconds(),'f',3)+"\t"
                     +zeroPadding(EV_v_angle.getGradus())+" "+QString::number(EV_v_angle.getMinutes())+" "+QString::number(EV_v_angle.getSeconds(),'f',3)+"\t"
                     +zeroPadding(sko_hz_angle.getSeconds(),3)+"\t"+zeroPadding(sko_v_angle.getSeconds(),3)+"\n";
+
             measure_mutex.lock();
             saveProtocolText(protocol_text);
             measure_mutex.unlock();
@@ -972,7 +966,7 @@ DataFromThreadtoProtocol MainWindow::parralelMakeMeasureCheck(QSharedPointer<The
     const double limit_SKOHz = ui->SKOHzLimitSpinBox->value();
     const double limit_SKOV = ui->SKOVLimitSpinBox->value();
 
-    if(sko_hz_angle.getSeconds()>limit_SKOHz || sko_v_angle.getSeconds()>limit_SKOV)
+    if(sko_hz_angle.getSeconds() > limit_SKOHz || sko_v_angle.getSeconds() > limit_SKOV)
     {
         QApplication::beep();
     }
@@ -1174,7 +1168,7 @@ void MainWindow::thdWizardHandler()
         {
             throw ThdWizardParagraphs.curr_num;
         }
-        ++ThdWizardParagraphs.curr_num;
+        ++ ThdWizardParagraphs.curr_num;
     }
 
 

@@ -80,13 +80,14 @@ bool Theodolite::closeConnection()
         MyComEnd ComEnd=(MyComEnd) geocom_orig->resolve("?COM_End@@YAFXZ");
         if(ComEnd)
             returnedCode = ComEnd();
+
         if (returnedCode != GRC_OK)
         {
             return false;
         }
 
     }
-    connect_state=false;
+    connect_state = false;
     return true;
 }
 
@@ -100,7 +101,8 @@ QString Theodolite::getLastRetMes()
     MyGetErrorText GetErrorText = (MyGetErrorText) geocom_orig->resolve("?COM_GetErrorText@@YAFFPAD@Z");
     if(GetErrorText)
         GetErrorText(returnedCode, message_buffer);
-    for(int i = 0;i < sizeof(message_buffer);i++)
+
+    for(int i = 0;i < sizeof(message_buffer); i ++)
     {
         if( message_buffer[i])
         {
@@ -162,6 +164,7 @@ TheodoliteMeasure Theodolite::makeOneMeasure(MES_TYPE angle_type)
         MyGetAngle GetAngle = (MyGetAngle) geocom_orig->resolve("?TMC_GetAngle@@YAFAAUTMC_ANGLE@@W4TMC_INCLINE_PRG@@@Z");
         if(GetAngle)
             returnedCode = GetAngle(raw_measures, TMC_AUTO_INC);
+
         if (returnedCode == GRC_OK)
         {
             if(angle_type == THD_MES)
@@ -173,6 +176,7 @@ TheodoliteMeasure Theodolite::makeOneMeasure(MES_TYPE angle_type)
                 thd_measure.setMeasureData(raw_measures.Incline.dCrossIncline*trans_to_rad,raw_measures.Incline.dLengthIncline*trans_to_rad,raw_measures.eFace);
             }
         }
+
         error_report(getLastRetMes());
     }
     return thd_measure;

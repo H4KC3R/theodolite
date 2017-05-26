@@ -1,0 +1,25 @@
+QLineEdit {border: 1px solid gray; 
+padding: 0 4px; 
+selection-background-color: darkgray;} 
+
+
+QPushButton { border: 1px solid gray; 
+background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
+stop: 0 #f6f7fa, stop: 1 #dadbde); 
+min-width: 50px; 
+min-height: 20px;} 
+
+QPushButton:pressed { 
+background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
+stop: 0 #dadbde, stop: 1 #f6f7fa);} 
+
+QPushButton:flat { 
+border: none; /* no border for a flat push button */} 
+
+QPushButton:default { 
+border-color: navy; /* make the default button prominent */} 
+QPushButton#pushButton_6{width:127px} 
+
+QComboBox {border: 1px solid gray} 
+QScrollArea {border:none} 
+QTextEdit{border: 1px solid gray;} 

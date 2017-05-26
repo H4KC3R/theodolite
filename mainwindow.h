@@ -118,6 +118,7 @@ public:
 
 
 private:
+    void setStyle();
     void connectTheodolit();
     void makeMeasureNoSave();
     void makeMeasureAndSave();

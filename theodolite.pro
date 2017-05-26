@@ -33,3 +33,6 @@ FORMS    += mainwindow.ui \
     dialog.ui
 
 win32:RC_FILE = theodolite.rc
+
+RESOURCES += \
+    sources.qrc
