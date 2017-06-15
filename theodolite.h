@@ -20,20 +20,20 @@ typedef QVector<TheodoliteMeasure> MeasuresFromTheodolite;
 class Theodolite:public QObject
 {
     Q_OBJECT
-    typedef GRC_TYPE (*MyComInit)(void);
-    typedef GRC_TYPE (*MyOpenConnection)(COM_PORT ePort,
+    typedef GRC_TYPE (*ThdComInit)(void);
+    typedef GRC_TYPE (*ThdOpenConnection)(COM_PORT ePort,
                                          COM_BAUD_RATE &BaudRate,
                                          short nRetries);
-    typedef GRC_TYPE (*MyComEnd)();
-    typedef GRC_TYPE (*MyCloseConnection)();
-    typedef GRC_TYPE (*MyGetErrorText)(GRC_TYPE RetCode,
+    typedef GRC_TYPE (*ThdComEnd)();
+    typedef GRC_TYPE (*ThdCloseConnection)();
+    typedef GRC_TYPE (*ThdGetErrorText)(GRC_TYPE RetCode,
                                       char *szErrText);
-    typedef GRC_TYPE (*MyGetAngle)(TMC_ANGLE       &Angle,
+    typedef GRC_TYPE (*ThdGetAngle)(TMC_ANGLE       &Angle,
                                    TMC_INCLINE_PRG eMode);
 
-    typedef GRC_TYPE (*MyDoMeasure) (TMC_MEASURE_PRG Command);
-    typedef GRC_TYPE (*MySetOrientation) (double HzOrient);
-    typedef GRC_TYPE (*MyGetInstrumentNo)(long &SerialNo);
+    typedef GRC_TYPE (*ThdDoMeasure) (TMC_MEASURE_PRG Command);
+    typedef GRC_TYPE (*ThdSetOrientation) (double HzOrient);
+    typedef GRC_TYPE (*ThdGetInstrumentNo)(long &SerialNo);
 public:
 
 
@@ -45,7 +45,7 @@ public:
 
 
     bool connectLibrary(const QString& );
-    bool enableConnection(COM_PORT port, COM_BAUD_RATE def_br=COM_BAUD_9600,short nRetries=4);
+    bool enableConnection(COM_PORT port, COM_BAUD_RATE def_br = COM_BAUD_9600,short nRetries = 4);
     bool closeConnection();
     QString getLastRetMes();
     MeasuresFromTheodolite startMeasures(quint16, MES_TYPE);
