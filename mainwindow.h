@@ -55,7 +55,7 @@ struct DataFromThreadtoProtocol
 
     bool isEmpty() const
     {
-        return sko_hz.isEmpty()&&sko_v.isEmpty()&&protocol_text.isEmpty();
+        return sko_hz.isEmpty() && sko_v.isEmpty() && protocol_text.isEmpty();
     }
 };
 
@@ -72,7 +72,7 @@ struct WizardParagraphs
 
     bool isEmpty() const
     {
-        return paragraphs.isEmpty()&&!curr_num;
+        return paragraphs.isEmpty() && !curr_num;
     }
 };
 
@@ -118,52 +118,91 @@ public:
 
 
 private:
+
+    void notifyBoth(const QString& message);
+
     void setStyle();
+
     void connectTheodolit();
+
     void makeMeasureNoSave();
+
     void makeMeasureAndSave();
+
     void parallelHandlerNosave();
+
     void parallelHandlerDosave();
+
     void resetOrientationHandler();
+
     void parallelResetOrientation();
+
     void on_startMeasuresButton_clicked();
+
     void on_endMeasuresButton_clicked();
+
     void on_chooseFilePushButton_clicked();
+
     void on_performPushButton_clicked();
+
     void on_nextPushButton_clicked();
+
     void on_chooseDirectoryButton_clicked();
+
     void on_openDirectoryButton_clicked();
+
     void on_starThdButton_clicked();
+
     void updateLed();
+
     void initializeValidators();
+
     void initializeComboBoxes();
+
     void initializeConnectionTable();
 
-    MeasureCharacteristics calculateMeasureCharact(MeasuresFromTheodolite measure_vector);
+    MeasureCharacteristics calculateMeasureCharact (const MeasuresFromTheodolite& measure_vector);
 
     void dataFromThreadHandler(const DFT& data);
+
     bool prepareParralelMSeasure();
+
     void parallelConnection();
+
     void reportAboutConnection(QString message);
+
     void reportAboutError (QString er_message);
 
+
     void setDataFromThread(const DFT& data, QTextEdit* text_edit, QLineEdit* meanHz_line_edit, QLineEdit* meanV_line_edit, QLineEdit* skoHz_line_edit
-                              , QLineEdit* skoV_line_edit, QLineEdit*SKO3xHz_line_edit, QLineEdit*SKO3xV_line_edit);
-    DFTP parralelMakeMeasureCheck(QSharedPointer<Theodolite>theodolite, QComboBox*combo_box, const int&count_of_measures);
-    void parallelMakeMeasureUncheck(QSharedPointer<Theodolite>theodolite, QComboBox*combo_box, const int&count_of_measures, bool do_save);
+                              , QLineEdit* skoV_line_edit, QLineEdit* SKO3xHz_line_edit, QLineEdit* SKO3xV_line_edit);
+
+    DFTP parralelMakeMeasureCheck(QSharedPointer <Theodolite> theodolite, QComboBox* combo_box, const int& count_of_measures);
+
+    void parallelMakeMeasureUncheck(QSharedPointer <Theodolite> theodolite, QComboBox* combo_box, const int& count_of_measures, bool do_save);
 
     void resetOrientation(QSharedPointer<Theodolite>, QLineEdit*, QTextEdit*);
-    void makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,QTextEdit* text_edit,QComboBox* combo_box
-                     ,QLineEdit* meanHz_line_edit,QLineEdit* meanV_line_edit,QLineEdit* skoHz_line_edit
-                     ,QLineEdit* skoV_line_edit,QLineEdit*SKO3xHz_line_edit,QLineEdit*SKO3xV_line_edit);
 
-    void saveStarThdData(starThdData star_data);
+    void makeMeasure(bool do_save, QSharedPointer <Theodolite> theodolite, QTextEdit* text_edit, QComboBox* combo_box
+                     ,QLineEdit* meanHz_line_edit,QLineEdit* meanV_line_edit,QLineEdit* skoHz_line_edit
+                     ,QLineEdit* skoV_line_edit,QLineEdit*SKO3xHz_line_edit,QLineEdit* SKO3xV_line_edit);
+
+    void saveStarThdData(StarThdData star_data);
+
+    QString makeProtocol(const QString& deviceName, double circle, const QString& measureType, const MeasureCharacteristics& meas_chrc,
+                      const GMS& EV_hz_angle, const GMS& EV_v_angle, const GMS& sko_hz_angle, const GMS& sko_v_angle);
+    QString getDeviceName(QSharedPointer <Theodolite> theodolite);
+
     void saveProtocolText(const QString& protocol_text);
+
     void saveSettings();
+
     void loadSettings();
 
     void thdWizardHandler();
+
     void updateParagraphsAfterError();
+
     void notePerformOfOperation(enum OPERATION_TYPE type);
 
 
@@ -184,8 +223,6 @@ private:
     bool measures_started = false;    //начаты ли измерений с записью в файл
     bool pass_next = false;   //выполнена ли текущая операция, можно ли двигаться дальше
     quint16 need_to_complete_operation = 0;   //тип операции, которую нужно выполнить
-
-
 
 
 

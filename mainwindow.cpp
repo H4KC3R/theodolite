@@ -13,26 +13,24 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     ui->setupUi(this);
-    qRegisterMetaType<DataFromThread>();
-    settings= new QSettings(QDir::currentPath()+"/"+"config.ini",QSettings::IniFormat,this);
+    qRegisterMetaType <DataFromThread> ();
+    settings = new QSettings(QDir::currentPath() + "/" + "config.ini", QSettings::IniFormat, this);
 
     setStyle();
-
-
     initializeValidators();
     initializeConnectionTable();
     initializeComboBoxes();
 
     theodolite_1.reset(new Theodolite());
     theodolite_1->setObjectName("theodolite_1");
-    if(!theodolite_1->connectLibrary("GeoComS2K.dll"))
+    if (!theodolite_1->connectLibrary("GeoComS2K.dll"))
     {
         ui->textEdit->append("Неверно задан путь к библиотеке Geocom\n");
     }
 
     theodolite_2.reset(new Theodolite());
     theodolite_2->setObjectName("theodolite_2");
-    if(!theodolite_2->connectLibrary("GeoComS2K2.dll"))
+    if (!theodolite_2->connectLibrary("GeoComS2K2.dll"))
     {
         ui->textEdit_2->append("Неверно задан путь к библиотеке Geocom\n");
     }
@@ -93,6 +91,13 @@ void MainWindow::initializeValidators()
 
 }
 
+
+void MainWindow::notifyBoth(const QString& message)
+{
+    ui->textEdit->append(message);
+    ui->textEdit_2->append(message);
+}
+
 void MainWindow::setStyle()
 {
     QFile file(":/sources/style.txt");
@@ -121,7 +126,7 @@ void MainWindow::initializeComboBoxes()
     ui->ReportComboBox_2->insertItems(0, report_list_thd2);
 
     QStringList comPorts;
-    for(qint32 i = COM_1;i <= COM_24;i ++)
+    for (qint32 i = COM_1;i <= COM_24;i ++)
     {
         comPorts.append(QString("COM_%1").arg(i + 1));
     }
@@ -168,13 +173,13 @@ void MainWindow::loadSettings()
 
 void MainWindow::resetOrientation(QSharedPointer<Theodolite> theodolite, QLineEdit* getAngleLineEdit, QTextEdit* theodolitesTextEdit)
 {
-    if(!theodolite->isConnected())
+    if (!theodolite->isConnected())
     {
         theodolitesTextEdit->append("Теодолит не подключен");
         return;
     }
     QString gms_angle = getAngleLineEdit->text();
-    if(!GMS::checkStringGMSAngle(gms_angle))
+    if (!GMS::checkStringGMSAngle(gms_angle))
     {
         theodolitesTextEdit->append("Угол введен неверно.");
         return;
@@ -204,7 +209,7 @@ void MainWindow::parallelResetOrientation()
 void MainWindow::resetOrientationHandler()
 {
     QPushButton* pb = dynamic_cast<QPushButton*>(sender());
-    if(!pb->objectName().contains("2"))
+    if (!pb->objectName().contains("2"))
     {
         resetOrientation(theodolite_1,ui->HzAngleValueLineEdit,ui->textEdit);
         notePerformOfOperation(RESET_HZ_FIRST_THD);
@@ -242,27 +247,25 @@ void MainWindow::on_openDirectoryButton_clicked()
 
 void MainWindow::on_startMeasuresButton_clicked()
 {
-    if(directory_name.isEmpty())
+    if (directory_name.isEmpty())
     {
-        ui->textEdit->append("Директория не выбрана!");
-        ui->textEdit_2->append("Директория не выбрана!");
+        notifyBoth("Директория не выбрана!");
         return;
     }
 
     QFile directory (directory_name);
-    if(!directory.exists())
+    if (!directory.exists())
     {
-        ui->textEdit->append("Директория не существует!");
-        ui->textEdit_2->append("Директория не существует!");
+        notifyBoth("Директория не существует!");
         return;
     }
 
-    if(measures_started)
+    if (measures_started)
     {
-        ui->textEdit->append("Завершите предыдущие измерения прежде чем начать новые");
-        ui->textEdit_2->append("Завершите предыдущие измерения прежде чем начать новые");
+        notifyBoth("Завершите предыдущие измерения прежде чем начать новые");
         return;
     }
+
     ui->textEdit->clear();
     ui->textEdit_2->clear();
 
@@ -272,8 +275,8 @@ void MainWindow::on_startMeasuresButton_clicked()
     report_filename = "/"+current_date.toString("yy.MM.dd")+"_"+current_time.toString("hh-mm-ss")+"_Measures"+".txt";
     protocol_filename = "/"+current_date.toString("yy.MM.dd")+"_"+current_time.toString("hh-mm-ss")+"_Protocol"+".txt";
     measures_started = true;
-    ui->textEdit->append("Измерения начаты\n");
-    ui->textEdit_2->append("Измерения начаты\n");
+    notifyBoth("Измерения начаты\n");
+
 }
 
 
@@ -288,8 +291,8 @@ void MainWindow::on_endMeasuresButton_clicked()
     if (data.open(QFile::WriteOnly | QFile::Append | QIODevice::Text))
     {
         QTextStream out(&data);
-        out<<ui->textEdit->toPlainText();
-        out<<ui->textEdit_2->toPlainText();
+        out << ui->textEdit->toPlainText();
+        out << ui->textEdit_2->toPlainText();
     }
     report_filename.clear();
     protocol_filename.clear();
@@ -308,7 +311,7 @@ void MainWindow::on_starThdButton_clicked()
 void MainWindow::reportAboutConnection(QString message)
 {
 
-    if(sender()->objectName() == theodolite_1->objectName())
+    if (sender()->objectName() == theodolite_1->objectName())
     {
 
         ui->textEdit->append(message);
@@ -325,16 +328,13 @@ void MainWindow::reportAboutConnection(QString message)
         ui->tableWidget->item(0,1)->setText("Подключен");
     }
 
-
-
 }
-
 
 
 
 void MainWindow::reportAboutError(QString er_message)
 {
-    if(sender()->objectName() == theodolite_1->objectName())
+    if (sender()->objectName() == theodolite_1->objectName())
     {
         ui->textEdit->append("Теодолит №1: произошла ошибка\n");
         ui->textEdit->append(er_message);
@@ -349,27 +349,42 @@ void MainWindow::reportAboutError(QString er_message)
 }
 
 
-
-
-
-void MainWindow::saveStarThdData(starThdData Star_data)
+QString MainWindow::makeProtocol(const QString& deviceName, double circle, const QString& measureType, const MeasureCharacteristics& meas_chrc,
+                              const GMS& EV_hz_angle, const GMS& EV_v_angle, const GMS& sko_hz_angle, const GMS& sko_v_angle)
 {
-    if(!measures_started)
+
+     QString protocolText = QString ("%1\t%2\tКРУГ(%3)\t%4\t%5\t%6\t%7\t%8\t%9\t%10\t%11\t%12\t%13\t%14\n")
+            .arg(num_of_measures++).arg(deviceName).arg(circle)
+            .arg(measureType).arg(zeroPadding(meas_chrc.EV_hz, 10)).arg(zeroPadding(meas_chrc.EV_v ,10))
+            .arg(zeroPadding(EV_hz_angle.getGradus())).arg(EV_hz_angle.getMinutes()).arg(EV_hz_angle.getSeconds(), 0, 'f', 3)
+            .arg(zeroPadding(EV_v_angle.getGradus())).arg(EV_v_angle.getMinutes()).arg(EV_v_angle.getSeconds(), 0, 'f', 3)
+            .arg(zeroPadding(sko_hz_angle.getSeconds(), 3)).arg(zeroPadding(sko_v_angle.getSeconds(),3));
+
+    return protocolText;
+}
+
+QString MainWindow::getDeviceName(QSharedPointer <Theodolite> theodolite)
+{
+    return theodolite->objectName() == (theodolite_1->objectName()) ? "Теодолит №1": "Теодолит №2";
+}
+
+void MainWindow::saveStarThdData(StarThdData star_data)
+{
+    if (!measures_started)
     {
         QMessageBox::information(NULL,"Ошибка","Измерения не начаты");
         return;
     }
-    QString Hz_angle = Star_data.Hz_angle;
-    QString V_angle = Star_data.V_angle;
+    QString Hz_angle = star_data.Hz_angle;
+    QString V_angle = star_data.V_angle;
 
-    if(!GMS::checkStringGMSAngle(Hz_angle) || !GMS::checkStringGMSAngle(V_angle))
+    if (!GMS::checkStringGMSAngle(Hz_angle) || !GMS::checkStringGMSAngle(V_angle))
     {
         QMessageBox::information(NULL,"Ошибка","Углы заданы неверно");
         return;
     }
-    QStringList split_Hz_angle=Hz_angle.split(" ");
-    QStringList split_V_angle=V_angle.split(" ");
-
+    QStringList split_Hz_angle = Hz_angle.split(" ");
+    QStringList split_V_angle = V_angle.split(" ");
 
 
     GMS Hz_angle_gms;
@@ -385,10 +400,10 @@ void MainWindow::saveStarThdData(starThdData Star_data)
 
     double hz_angle_grad = Hz_angle_gms.transToGrad();
     double v_angle_grad = V_angle_gms.transToGrad();
-    const QString protocol_text = QString::number(num_of_measures++)+"\t"+tr("Зв.Теодолит")+"\t"+Star_data.cirle
-            +"\t"+Star_data.MeasureObj+"\t"+zeroPadding(hz_angle_grad,10)+"\t"+zeroPadding(v_angle_grad,10)+"\t"
-            +zeroPadding(Hz_angle_gms.getGradus())+" "+QString::number(Hz_angle_gms.getMinutes())+" "+QString::number(Hz_angle_gms.getSeconds(),'f',3)+"\t"
-            +zeroPadding(V_angle_gms.getGradus())+" "+QString::number(V_angle_gms.getMinutes())+" "+QString::number(V_angle_gms.getSeconds(),'f',3)+"\t"+"\n";
+    const QString protocol_text = QString::number(num_of_measures++) + "\t" + tr("Зв.Теодолит")+"\t" + star_data.cirle
+            +"\t" + star_data.MeasureObj + "\t" + zeroPadding(hz_angle_grad,10) + "\t"+zeroPadding(v_angle_grad,10) + "\t"
+            + zeroPadding(Hz_angle_gms.getGradus()) + " "+QString::number(Hz_angle_gms.getMinutes()) + " "+QString::number(Hz_angle_gms.getSeconds(),'f',3) + "\t"
+            + zeroPadding(V_angle_gms.getGradus()) + " "   + QString::number(V_angle_gms.getMinutes()) +" "+QString::number(V_angle_gms.getSeconds(),'f',3) + "\t"+ "\n";
 
     saveProtocolText(protocol_text);
     notePerformOfOperation(MEASURE_STAR_THD);
@@ -399,14 +414,14 @@ void MainWindow::saveStarThdData(starThdData Star_data)
 void MainWindow::connectTheodolit()
 {
     QPushButton *pb = dynamic_cast<QPushButton*>(sender());
-    if(!pb->objectName().contains("2"))
+    if (!pb->objectName().contains("2"))
     {
-        if(theodolite_1->isConnected()) return;
+        if (theodolite_1->isConnected()) return;
 
         else
         {
             COM_PORT thd1_port = static_cast <COM_PORT> (ui->comPortComboBox->currentIndex());
-            if(!theodolite_1->enableConnection(thd1_port))
+            if (!theodolite_1->enableConnection(thd1_port))
             {
                 ui->textEdit->append("Подключение не удалось\n");
             }
@@ -414,12 +429,12 @@ void MainWindow::connectTheodolit()
     }
     else
     {
-        if(theodolite_2->isConnected())  return;
+        if (theodolite_2->isConnected())  return;
 
         else
         {
             COM_PORT thd2_port = static_cast <COM_PORT> (ui->comPortComboBox_2->currentIndex());
-            if(!theodolite_2->enableConnection(thd2_port))
+            if (!theodolite_2->enableConnection(thd2_port))
             {
                 ui->textEdit_2->append("Подключение не удалось\n");
             }
@@ -428,7 +443,7 @@ void MainWindow::connectTheodolit()
 }
 
 
-MeasureCharacteristics MainWindow::calculateMeasureCharact(MeasuresFromTheodolite measure_vector)
+MeasureCharacteristics MainWindow::calculateMeasureCharact(const MeasuresFromTheodolite& measure_vector)
 {
     MeasureCharacteristics meas_chrc;
     auto min_max_pair = std::minmax_element(measure_vector.begin(),measure_vector.end(),
@@ -437,21 +452,21 @@ MeasureCharacteristics MainWindow::calculateMeasureCharact(MeasuresFromTheodolit
     // если находимся в области нуля(т.е разность между минимальным и максимальным углом),
     // переопределяем углы через asin(sin()), считаем среднее по "Mean of circular quantities"
     const int max_scatter = 356;
-    if((*min_max_pair.second).getHzAngle() - (*min_max_pair.first).getHzAngle() > max_scatter)
+    if ((*min_max_pair.second).getHzAngle() - (*min_max_pair.first).getHzAngle() > max_scatter)
     {
 
-        meas_chrc.EV_hz = meanSkoFcn::calc_circle_mean(measure_vector,meanSkoFcn::HZ_A);
-        meas_chrc.sko_hz = meanSkoFcn::calc_circle_sko(measure_vector,meas_chrc.EV_hz,meanSkoFcn::HZ_A);
-        if(meas_chrc.EV_hz < 0) meas_chrc.EV_hz = 360.0+meas_chrc.EV_hz;
+        meas_chrc.EV_hz = meanSkoFcn::calc_circle_mean(measure_vector, meanSkoFcn::HZ_A);
+        meas_chrc.sko_hz = meanSkoFcn::calc_circle_sko(measure_vector, meas_chrc.EV_hz,meanSkoFcn::HZ_A);
+        if (meas_chrc.EV_hz < 0) meas_chrc.EV_hz = 360.0 + meas_chrc.EV_hz;
     }
     else
     {
         meas_chrc.EV_hz = meanSkoFcn::calc_mean(measure_vector,meanSkoFcn::HZ_A);
-        meas_chrc.sko_hz = meanSkoFcn::calc_sko(measure_vector,meas_chrc.EV_hz,meanSkoFcn::HZ_A);
+        meas_chrc.sko_hz = meanSkoFcn::calc_sko(measure_vector, meas_chrc.EV_hz,meanSkoFcn::HZ_A);
     }
 
-    meas_chrc.EV_v = meanSkoFcn::calc_mean(measure_vector,meanSkoFcn::V_A);
-    meas_chrc.sko_v = meanSkoFcn::calc_sko(measure_vector,meas_chrc.EV_v,meanSkoFcn::V_A);
+    meas_chrc.EV_v = meanSkoFcn::calc_mean(measure_vector, meanSkoFcn::V_A);
+    meas_chrc.sko_v = meanSkoFcn::calc_sko(measure_vector, meas_chrc.EV_v, meanSkoFcn::V_A);
 
     return meas_chrc;
 
@@ -465,39 +480,39 @@ void MainWindow::makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,
     try
     {
         connectTheodolit();
-        if(!theodolite->isConnected()) return;
+        if (!theodolite->isConnected()) return;
 
         quint16 count_of_measures = ui->MesCountSpinBox->value();
-        if(!count_of_measures)
+        if (!count_of_measures)
         {
             text_edit->append("Задано неверное число измерений\n");
             return;
         }
 
         double limit_SKOHz = ui->SKOHzLimitSpinBox->value();
-        if(!limit_SKOHz)
+        if (!limit_SKOHz)
         {
             text_edit->append("Не задано предельное СКО по горизонтали\n");
             return;
         }
         double limit_SKOV = ui->SKOVLimitSpinBox->value();
-        if(!limit_SKOV)
+        if (!limit_SKOV)
         {
             text_edit->append("Не задано предельное СКО по вертикали\n");
             return;
         }
 
 
-        if(ui->checkCompensator->isChecked())
+        if (ui->checkCompensator->isChecked())
         {
 
-            if(!ui->IncliationSKOSpinBox->value())
+            if (!ui->IncliationSKOSpinBox->value())
             {
                 text_edit->append("Не задано предельное СКО наклона\n");
                 return;
             }
 
-            if(!theodolite->checkCompensator(ui->IncliationSKOSpinBox->value()))
+            if (!theodolite->checkCompensator(ui->IncliationSKOSpinBox->value()))
             {
                 QApplication::beep();
                 text_edit->append("Превышено предельное СКО наклона\n");
@@ -511,7 +526,7 @@ void MainWindow::makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,
 
         MeasuresFromTheodolite measure_vector;
 
-        if(combo_box->currentText() == "Компенсатор")
+        if (combo_box->currentText() == "Компенсатор")
         {
             measure_vector = theodolite->startMeasures(count_of_measures,THD_INCL);
         }
@@ -521,7 +536,7 @@ void MainWindow::makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,
         }
 
 
-        for(auto&i:measure_vector)
+        for (auto&i:measure_vector)
         {
             GMS first_angle(i.getHzAngle());
             GMS second_angle(i.getVAngle());
@@ -533,8 +548,8 @@ void MainWindow::makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,
                               QString::number(second_angle.getSeconds(),'f',3)+"\n");
         }
 
-        text_edit->append("FACE: "+QString::number(measure_vector[0].getCircle()));
-        text_edit->append("Число некорректных измерений: "+QString::number(count_of_measures-measure_vector.size())+"\n");
+        text_edit->append("FACE: " + QString::number(measure_vector[0].getCircle()));
+        text_edit->append("Число некорректных измерений: " + QString::number(count_of_measures-measure_vector.size()) + "\n");
 
         MeasureCharacteristics meas_chrc = calculateMeasureCharact(measure_vector);
         GMS sko_hz_angle(meas_chrc.sko_hz);
@@ -545,7 +560,7 @@ void MainWindow::makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,
 
 
         bool sko_limit = false;
-        if(sko_hz_angle.getSeconds() > limit_SKOHz || sko_v_angle.getSeconds() > limit_SKOV)
+        if (sko_hz_angle.getSeconds() > limit_SKOHz || sko_v_angle.getSeconds() > limit_SKOV)
         {
             QApplication::beep();
             text_edit->append("Внимание! Превышено предельное СКО\n");
@@ -557,21 +572,16 @@ void MainWindow::makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,
         meanV_line_edit->setText(QString::number(EV_v_angle.getGradus())+" "+QString::number(EV_v_angle.getMinutes())+" "+QString::number(EV_v_angle.getSeconds(),'f',3));
         skoHz_line_edit->setText(QString::number(sko_hz_angle.getSeconds(),'f',3));
         skoV_line_edit->setText(QString::number(sko_v_angle.getSeconds(),'f',3));
-        SKO3xHz_line_edit->setText(QString::number(3*sko_hz_angle.getSeconds(),'f',3));
-        SKO3xV_line_edit->setText(QString::number(3*sko_v_angle.getSeconds(),'f',3));
+        SKO3xHz_line_edit->setText(QString::number(3 * sko_hz_angle.getSeconds(),'f',3));
+        SKO3xV_line_edit->setText(QString::number(3 * sko_v_angle.getSeconds(),'f',3));
 
-        auto getThdName = [&](){
-            return theodolite->objectName() == (theodolite_1->objectName()) ? "Теодолит №1": "Теодолит №2";
-        };
-
-        const QString protocol_text = QString::number(num_of_measures++)+"\t"+tr(getThdName())+"\t"+"КРУГ("+QString::number(measure_vector[0].getCircle())+")\t"
-                +combo_box->currentText()+"\t"+zeroPadding(meas_chrc.EV_hz,10)+"\t"+zeroPadding(meas_chrc.EV_v,10)+"\t"
-                +zeroPadding(EV_hz_angle.getGradus())+" "+QString::number(EV_hz_angle.getMinutes())+" "+QString::number(EV_hz_angle.getSeconds(),'f',3)+"\t"
-                +zeroPadding(EV_v_angle.getGradus())+" "+QString::number(EV_v_angle.getMinutes())+" "+QString::number(EV_v_angle.getSeconds(),'f',3)+"\t"
-                +zeroPadding(sko_hz_angle.getSeconds(),3)+"\t"+zeroPadding(sko_v_angle.getSeconds(),3)+"\n";
+        const QString measureType = combo_box->currentText();
+        QString protocol_text = makeProtocol(getDeviceName(theodolite), measure_vector[0].getCircle(), measureType, meas_chrc,
+                EV_hz_angle, EV_v_angle, sko_hz_angle, sko_v_angle);
 
 
-        if(!sko_limit&&measures_started&&do_save)
+
+        if (!sko_limit && measures_started && do_save)
         {
             saveProtocolText(protocol_text);
             notePerformOfOperation(MEASURE_ONE_THD);
@@ -585,11 +595,6 @@ void MainWindow::makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,
         QMessageBox::information(NULL,"Ошибка",e.what());
         return;
     }
-    catch(...)
-    {
-        QMessageBox::information(NULL,"Ошибка","Неизвестная ошибка");
-        return;
-    }
 }
 
 
@@ -597,7 +602,7 @@ void MainWindow::makeMeasure(bool do_save,QSharedPointer<Theodolite> theodolite,
 void MainWindow::makeMeasureNoSave()
 {
     QPushButton* pb = dynamic_cast<QPushButton*>(sender());
-    if(!pb->objectName().contains("2"))
+    if (!pb->objectName().contains("2"))
     {
         makeMeasure(false,theodolite_1,ui->textEdit,ui->ReportComboBox,ui->meanHzLineEdit,ui->meanVLineEdit,
                     ui->SKOHzLineEdit,ui->SKOVLineEdit,ui->SKO3xHzLineEdit,ui->SKO3xVLineEdit);
@@ -613,14 +618,14 @@ void MainWindow::makeMeasureNoSave()
 
 void MainWindow::makeMeasureAndSave()
 {
-    if(!measures_started)
+    if (!measures_started)
     {
         ui->textEdit->append("Измерения не начаты.");
         ui->textEdit_2->append("Измерения не начаты.");
         return;
     }
     QPushButton* pb = dynamic_cast<QPushButton*>(sender());
-    if(!pb->objectName().contains("2"))
+    if (!pb->objectName().contains("2"))
     {
         makeMeasure(true,theodolite_1,ui->textEdit,ui->ReportComboBox,ui->meanHzLineEdit,ui->meanVLineEdit,
                     ui->SKOHzLineEdit,ui->SKOVLineEdit,ui->SKO3xHzLineEdit,ui->SKO3xVLineEdit);
@@ -636,10 +641,10 @@ void MainWindow::makeMeasureAndSave()
 
 void MainWindow::parallelHandlerNosave()
 {
-    if(prepareParralelMSeasure())
+    if (prepareParralelMSeasure())
     {
         parallelConnection();
-        if(theodolite_1->isConnected() && theodolite_2->isConnected())
+        if (theodolite_1->isConnected() && theodolite_2->isConnected())
         {
             std::thread thd1(&MainWindow::parallelMakeMeasureUncheck,this,theodolite_1,ui->ReportComboBox,ui->MesCountSpinBox->value(), false);
             thd1.detach();
@@ -653,18 +658,18 @@ void MainWindow::parallelHandlerNosave()
 
 void MainWindow::parallelHandlerDosave()
 {
-    if(!measures_started)
+    if (!measures_started)
     {
         ui->textEdit->append("Измерения не начаты.");
         ui->textEdit_2->append("Измерения не начаты.");
         return;
     }
 
-    if(prepareParralelMSeasure()) return;
+    if (prepareParralelMSeasure()) return;
 
 
     parallelConnection();
-    if(!theodolite_1->isConnected() || !theodolite_2->isConnected()) return;
+    if (!theodolite_1->isConnected() || !theodolite_2->isConnected()) return;
 
     auto thd1_future = std::async(std::launch::async,&MainWindow::parralelMakeMeasureCheck,this,theodolite_1,ui->ReportComboBox,ui->MesCountSpinBox->value());
     auto thd2_future = std::async(std::launch::async,&MainWindow::parralelMakeMeasureCheck,this,theodolite_2,ui->ReportComboBox_2,ui->MesCountSpinBox->value());
@@ -672,14 +677,14 @@ void MainWindow::parallelHandlerDosave()
     DFTP thd1_data = thd1_future.get();
     DFTP thd2_data = thd2_future.get();
 
-    if(!thd1_data.isEmpty() && !thd2_data.isEmpty())
+    if (!thd1_data.isEmpty() && !thd2_data.isEmpty())
     {
         double limit_SKOHz = ui->SKOHzLimitSpinBox->value();
         double limit_SKOV = ui->SKOVLimitSpinBox->value();
 
-        if(thd1_data.sko_hz.getSeconds() < limit_SKOHz && thd2_data.sko_hz.getSeconds() < limit_SKOHz)
+        if (thd1_data.sko_hz.getSeconds() < limit_SKOHz && thd2_data.sko_hz.getSeconds() < limit_SKOHz)
         {
-            if(thd1_data.sko_v.getSeconds() < limit_SKOV && thd2_data.sko_v.getSeconds() < limit_SKOV)
+            if (thd1_data.sko_v.getSeconds() < limit_SKOV && thd2_data.sko_v.getSeconds() < limit_SKOV)
             {
                 saveProtocolText(thd1_data.protocol_text);
                 saveProtocolText(thd2_data.protocol_text);
@@ -700,15 +705,15 @@ void MainWindow::parallelHandlerDosave()
 выведет*/
 void MainWindow::dataFromThreadHandler(const DFT &data)
 {
-    if(data.device_name == theodolite_1->objectName())
+    if (data.device_name == theodolite_1->objectName())
     {
 
-        setDataFromThread(data,ui->textEdit,ui->meanHzLineEdit,ui->meanVLineEdit,
+        setDataFromThread(data, ui->textEdit,ui->meanHzLineEdit,ui->meanVLineEdit,
                           ui->SKOHzLineEdit,ui->SKOVLineEdit,ui->SKO3xHzLineEdit,ui->SKO3xVLineEdit);
     }
     else
     {
-        setDataFromThread(data,ui->textEdit_2,ui->meanHzLineEdit_2,ui->meanVLineEdit_2,
+        setDataFromThread(data, ui->textEdit_2,ui->meanHzLineEdit_2,ui->meanVLineEdit_2,
                           ui->SKOHzLineEdit_2,ui->SKOVLineEdit_2,ui->SKO3xHzLineEdit_2,ui->SKO3xVLineEdit_2);
     }
 }
@@ -721,12 +726,12 @@ void MainWindow::setDataFromThread(const DFT& data,QTextEdit* text_edit,
                                    ,QLineEdit* skoV_line_edit,QLineEdit*SKO3xHz_line_edit,QLineEdit*SKO3xV_line_edit)
 {
     /*если превышено ско компенсатора, то сюда придёт структура с пустыми данными об измерениях*/
-    if(data.notContainsMeasures())
+    if (data.notContainsMeasures())
     {
         text_edit->append("Превышено СКО компенсатора\n");
         return;
     }
-    for(auto&i:data.measure_vector)
+    for (const auto& i : data.measure_vector)
     {
         GMS first_angle(i.getHzAngle());
         GMS second_angle(i.getVAngle());
@@ -740,10 +745,10 @@ void MainWindow::setDataFromThread(const DFT& data,QTextEdit* text_edit,
 
 
 
-    text_edit->append("FACE: "+QString::number(data.measure_vector[0].getCircle()));
-    text_edit->append("Число некорректных измерений: "+QString::number(ui->MesCountSpinBox->value()-data.measure_vector.size())+"\n");
+    text_edit->append("FACE: " + QString::number(data.measure_vector[0].getCircle()));
+    text_edit->append("Число некорректных измерений: " + QString::number(ui->MesCountSpinBox->value() - data.measure_vector.size()) + "\n");
 
-    if(data.sko_Hz.getSeconds()>ui->SKOHzLimitSpinBox->value() || data.sko_V.getSeconds()>ui->SKOVLimitSpinBox->value())
+    if (data.sko_Hz.getSeconds() > ui->SKOHzLimitSpinBox->value() || data.sko_V.getSeconds() > ui->SKOVLimitSpinBox->value())
     {
         text_edit->append("Внимание! Превышено предельное СКО\n");
     }
@@ -755,7 +760,7 @@ void MainWindow::setDataFromThread(const DFT& data,QTextEdit* text_edit,
     skoV_line_edit->setText(QString::number(data.sko_V.getSeconds(),'f',3));
     SKO3xHz_line_edit->setText(QString::number(3*data.sko_Hz.getSeconds(),'f',3));
     SKO3xV_line_edit->setText(QString::number(3*data.sko_V.getSeconds(),'f',3));
-    if(!measures_started)
+    if (!measures_started)
     {
         text_edit->append("Внимание! Измерения не сохранены, т.к они не были начаты\n");
     }
@@ -767,7 +772,7 @@ void MainWindow::setDataFromThread(const DFT& data,QTextEdit* text_edit,
 
 void MainWindow::parallelConnection()
 {
-    if(theodolite_1->isConnected() && theodolite_2->isConnected())
+    if (theodolite_1->isConnected() && theodolite_2->isConnected())
     {
         return;
     }
@@ -775,18 +780,18 @@ void MainWindow::parallelConnection()
 
     else
     {
-        if(!theodolite_1->isConnected())
+        if (!theodolite_1->isConnected())
         {
-            if(!theodolite_1->enableConnection(COM_13))
+            if (!theodolite_1->enableConnection(COM_13))
             {
                 ui->textEdit->append("Подключение не удалось\n");
                 return;
             }
         }
 
-        if(!theodolite_2->isConnected())
+        if (!theodolite_2->isConnected())
         {
-            if(!theodolite_2->enableConnection(COM_12))
+            if (!theodolite_2->enableConnection(COM_12))
             {
                 ui->textEdit_2->append("Подключение не удалось\n");
                 return;
@@ -797,58 +802,46 @@ void MainWindow::parallelConnection()
 
 bool MainWindow::prepareParralelMSeasure()
 {
-    const int needed_count_of_cores = 3;
-    if(std::thread::hardware_concurrency() < needed_count_of_cores)
+
+    if (!ui->SKOHzLimitSpinBox->value())
     {
-        ui->textEdit->append("Данный процессор не позволяет произвести параллельные измерения");
-        ui->textEdit_2->append("Данный процессор не позволяет произвести параллельные измерения\n");
+        notifyBoth("Не задано предельное СКО по горизонтали\n");
         return false;
     }
 
-    if(!ui->SKOHzLimitSpinBox->value())
+    if (!ui->SKOVLimitSpinBox->value())
     {
-        ui->textEdit->append("Не задано предельное СКО по горизонтали\n");
-        ui->textEdit_2->append("Не задано предельное СКО по горизонтали\n");
-        return false;
-    }
-
-    if(!ui->SKOVLimitSpinBox->value())
-    {
-        ui->textEdit->append("Не задано предельное СКО по вертикали\n");
-        ui->textEdit_2->append("Не задано предельное СКО по вертикали\n");
+        notifyBoth("Не задано предельное СКО по вертикали\n");
         return false;
     }
 
 
-    if(!ui->MesCountSpinBox->value())
+    if (!ui->MesCountSpinBox->value())
     {
-        ui->textEdit->append("Задано неверное число измерений\n");
-        ui->textEdit_2->append("Задано неверное число измерений\n");
+        notifyBoth("Задано неверное число измерений\n");
         return false;
     }
 
-    if(!ui->IncliationSKOSpinBox->value() && ui->checkCompensator->isChecked())
+    if (!ui->IncliationSKOSpinBox->value() && ui->checkCompensator->isChecked())
     {
-        ui->textEdit->append("Не задано предельное СКО наклона\n");
-        ui->textEdit_2->append("Не задано предельное СКО наклона\n");
+        notifyBoth("Не задано предельное СКО наклона\n");
         return false;
     }
 
-    ui->textEdit->append("Начинаю измерения\n");
-    ui->textEdit_2->append("Начинаю измерения\n");
+    notifyBoth("Начинаю измерения\n");
     return true;
 }
 
 /*Параллельное измерение без проверки результатов от обоих теодолитов, т.е, если одно не выполнилось, а второе выполнилось, оно все равно
 запишется*/
-void MainWindow::parallelMakeMeasureUncheck(QSharedPointer<Theodolite> theodolite,QComboBox*combo_box,const int&count_of_measures,bool do_save)
+void MainWindow::parallelMakeMeasureUncheck(QSharedPointer <Theodolite> theodolite,QComboBox* combo_box,const int& count_of_measures,bool do_save)
 {
     try
     {
 
-        if(ui->checkCompensator->isChecked())
+        if (ui->checkCompensator->isChecked())
         {
-            if(!theodolite->checkCompensator(ui->IncliationSKOSpinBox->value()))
+            if (!theodolite->checkCompensator(ui->IncliationSKOSpinBox->value()))
             {
                 DFT data;
                 data.device_name = theodolite->objectName();
@@ -861,7 +854,7 @@ void MainWindow::parallelMakeMeasureUncheck(QSharedPointer<Theodolite> theodolit
 
         MeasuresFromTheodolite measure_vector;
 
-        if(combo_box->currentText() == "Компенсатор")
+        if (combo_box->currentText() == "Компенсатор")
         {
             measure_vector = theodolite->startMeasures(count_of_measures,THD_INCL);
         }
@@ -880,7 +873,7 @@ void MainWindow::parallelMakeMeasureUncheck(QSharedPointer<Theodolite> theodolit
         const double limit_SKOHz = ui->SKOHzLimitSpinBox->value();
         const double limit_SKOV = ui->SKOVLimitSpinBox->value();
 
-        if(sko_hz_angle.getSeconds() > limit_SKOHz || sko_v_angle.getSeconds() > limit_SKOV)
+        if (sko_hz_angle.getSeconds() > limit_SKOHz || sko_v_angle.getSeconds() > limit_SKOV)
         {
             QApplication::beep();
             sko_limit = true;
@@ -896,17 +889,12 @@ void MainWindow::parallelMakeMeasureUncheck(QSharedPointer<Theodolite> theodolit
         emit readyDataFromThread(data);
 
 
-        if(!sko_limit && measures_started && do_save)
+        if (!sko_limit && measures_started && do_save)
         {
-            auto getDeviceName = [&](){
-                return theodolite->objectName()==(theodolite_1->objectName()) ? "Теодолит №1": "Теодолит №2";
-            };
-            const QString protocol_text=QString::number(++num_of_measures)+"\t"+tr(getDeviceName())+"\t"+"КРУГ("
-                    +QString::number(measure_vector[0].getCircle())+")\t"+combo_box->currentText()
-                    +"\t"+zeroPadding(meas_chrc.EV_hz,10)+"\t"+zeroPadding(meas_chrc.EV_v,10)+"\t"
-                    +zeroPadding(EV_hz_angle.getGradus())+" "+QString::number(EV_hz_angle.getMinutes())+" "+QString::number(EV_hz_angle.getSeconds(),'f',3)+"\t"
-                    +zeroPadding(EV_v_angle.getGradus())+" "+QString::number(EV_v_angle.getMinutes())+" "+QString::number(EV_v_angle.getSeconds(),'f',3)+"\t"
-                    +zeroPadding(sko_hz_angle.getSeconds(),3)+"\t"+zeroPadding(sko_v_angle.getSeconds(),3)+"\n";
+
+            const QString measureType = combo_box->currentText();
+            QString protocol_text = makeProtocol(getDeviceName(theodolite), measure_vector[0].getCircle(), measureType, meas_chrc,
+                    EV_hz_angle, EV_v_angle, sko_hz_angle, sko_v_angle);
 
             measure_mutex.lock();
             saveProtocolText(protocol_text);
@@ -918,11 +906,6 @@ void MainWindow::parallelMakeMeasureUncheck(QSharedPointer<Theodolite> theodolit
         QMessageBox::information(NULL,"Ошибка",e.what());
         return;
     }
-    catch(...)
-    {
-        QMessageBox::information(NULL,"Ошибка","Неизвестная ошибка");
-        return;
-    }
 
 }
 
@@ -932,10 +915,10 @@ void MainWindow::parallelMakeMeasureUncheck(QSharedPointer<Theodolite> theodolit
 DataFromThreadtoProtocol MainWindow::parralelMakeMeasureCheck(QSharedPointer<Theodolite>theodolite, QComboBox*combo_box, const int&count_of_measures)
 {
 
-    if(ui->checkCompensator->isChecked())
+    if (ui->checkCompensator->isChecked())
     {
 
-        if(!theodolite->checkCompensator(ui->IncliationSKOSpinBox->value()))
+        if (!theodolite->checkCompensator(ui->IncliationSKOSpinBox->value()))
         {
             DFT data;
             data.device_name = theodolite->objectName();
@@ -948,13 +931,13 @@ DataFromThreadtoProtocol MainWindow::parralelMakeMeasureCheck(QSharedPointer<The
 
     MeasuresFromTheodolite measure_vector;
 
-    if(combo_box->currentText() == "Компенсатор")
+    if (combo_box->currentText() == "Компенсатор")
     {
-        measure_vector = theodolite->startMeasures(count_of_measures,THD_INCL);
+        measure_vector = theodolite->startMeasures(count_of_measures, THD_INCL);
     }
     else
     {
-        measure_vector = theodolite->startMeasures(count_of_measures,THD_MES);
+        measure_vector = theodolite->startMeasures(count_of_measures, THD_MES);
     }
 
     MeasureCharacteristics meas_chrc = calculateMeasureCharact(measure_vector);
@@ -966,7 +949,7 @@ DataFromThreadtoProtocol MainWindow::parralelMakeMeasureCheck(QSharedPointer<The
     const double limit_SKOHz = ui->SKOHzLimitSpinBox->value();
     const double limit_SKOV = ui->SKOVLimitSpinBox->value();
 
-    if(sko_hz_angle.getSeconds() > limit_SKOHz || sko_v_angle.getSeconds() > limit_SKOV)
+    if (sko_hz_angle.getSeconds() > limit_SKOHz || sko_v_angle.getSeconds() > limit_SKOV)
     {
         QApplication::beep();
     }
@@ -980,16 +963,10 @@ DataFromThreadtoProtocol MainWindow::parralelMakeMeasureCheck(QSharedPointer<The
     data.measure_vector = measure_vector;
     emit readyDataFromThread(data);
 
+    const QString measureType = combo_box->currentText();
+    QString protocol_text = makeProtocol(getDeviceName(theodolite), measure_vector[0].getCircle(), measureType, meas_chrc,
+            EV_hz_angle, EV_v_angle, sko_hz_angle, sko_v_angle);
 
-    auto getDeviceName = [&](){
-        return theodolite->objectName() == (theodolite_1->objectName()) ? "Теодолит №1": "Теодолит №2";
-    };
-    const QString protocol_text = QString::number(++num_of_measures)+"\t"+tr(getDeviceName())+"\t"
-            +"КРУГ("+QString::number(measure_vector[0].getCircle())+")\t"+combo_box->currentText()+"\t"
-            +zeroPadding(meas_chrc.EV_hz,10)+"\t"+zeroPadding(meas_chrc.EV_v,10)+"\t"
-            +zeroPadding(EV_hz_angle.getGradus())+" "+QString::number(EV_hz_angle.getMinutes())+" "+QString::number(EV_hz_angle.getSeconds(),'f',3)+"\t"
-            +zeroPadding(EV_v_angle.getGradus())+" "+QString::number(EV_v_angle.getMinutes())+" "+QString::number(EV_v_angle.getSeconds(),'f',3)+"\t"
-            +zeroPadding(sko_hz_angle.getSeconds(),3)+"\t"+zeroPadding(sko_v_angle.getSeconds(),3)+"\n";
     DFTP protocol_data;
     protocol_data.sko_hz = sko_hz_angle;
     protocol_data.sko_v = sko_v_angle;
@@ -1022,7 +999,7 @@ void MainWindow::thdWizardHandler()
     /*объект измерения для первого и второго теодолита соответственно*/
 
     /*Если предыдущая инструкция не была распознана, то считываем файл инструкции заново, в надежде, что пользователь его подправил*/
-    if(wizard_error)
+    if (wizard_error)
     {
         updateParagraphsAfterError();
         wizard_error = false;
@@ -1031,15 +1008,15 @@ void MainWindow::thdWizardHandler()
     currentActionPushButton = nullptr;
     need_to_complete_operation = NO_OPERATION;
 
-    if(ThdWizardParagraphs.isEmpty())
+    if (ThdWizardParagraphs.isEmpty())
     {
         QMessageBox::information(NULL,"Ошибка","Руководство не считано");
         return;
     }
-    if(ThdWizardParagraphs.paragraphs.size() <= ThdWizardParagraphs.curr_num)
+    if (ThdWizardParagraphs.paragraphs.size() <= ThdWizardParagraphs.curr_num)
     {
         ui->WizardTextEdit->appendPlainText("Измерения окончены.");
-        ThdWizardParagraphs.curr_num=0;
+        ThdWizardParagraphs.curr_num = 0;
         return;
     }
     /*Парсим строку инструкции из файла*/
@@ -1050,7 +1027,7 @@ void MainWindow::thdWizardHandler()
 
     try
     {
-        if(active_device.isEmpty())
+        if (active_device.isEmpty())
         {
             ui->WizardTextEdit->setPlainText(comment_to_action);
             pass_next = true;
@@ -1058,10 +1035,10 @@ void MainWindow::thdWizardHandler()
         }
 
 
-        else if(active_device.contains("Параллельно"))
+        else if (active_device.contains("Параллельно"))
         {
             ui->WizardTextEdit->setPlainText(comment_to_action);
-            if(object_of_measure.contains("Компенсатор"))
+            if (object_of_measure.contains("Компенсатор"))
             {
 
                 ui->ReportComboBox->setCurrentText(object_of_measure);
@@ -1069,25 +1046,25 @@ void MainWindow::thdWizardHandler()
                 currentActionPushButton = ui->parallelMesAndSaveButton;
                 need_to_complete_operation = MEASURE_PARRALEL;
             }
-            else if(object_of_measure.contains("друг"))
+            else if (object_of_measure.contains("друг"))
             {
                 ui->ReportComboBox->setCurrentText("Теодолит №2");
                 ui->ReportComboBox_2->setCurrentText("Теодолит №1");
                 currentActionPushButton = ui->parallelMesAndSaveButton;
                 need_to_complete_operation = MEASURE_PARRALEL;
             }
-            else if(object_of_measure.contains("Сброс"))
+            else if (object_of_measure.contains("Сброс"))
             {
                 currentActionPushButton = ui->parallelResetHzPushButton;
                 need_to_complete_operation = RESET_HZ_PARRALEL;
             }
             else
             {
-                if(ui->ReportComboBox->findText(object_of_measure.section(',',0,0))!=-1 &&
-                        ui->ReportComboBox_2->findText(object_of_measure.section(',',1,1))!=-1)
+                if (ui->ReportComboBox->findText(object_of_measure.section(',',0,0)) != -1
+                        && ui->ReportComboBox_2->findText(object_of_measure.section(',',1,1)) != -1)
                 {
-                    ui->ReportComboBox->setCurrentText(object_of_measure.section(',',0,0));
-                    ui->ReportComboBox_2->setCurrentText(object_of_measure.section(',',1,1));
+                    ui->ReportComboBox->setCurrentText(object_of_measure.section(',', 0, 0));
+                    ui->ReportComboBox_2->setCurrentText(object_of_measure.section(',', 1, 1));
                     currentActionPushButton = ui->parallelMesAndSaveButton;
                     need_to_complete_operation = MEASURE_PARRALEL;
                 }
@@ -1102,9 +1079,9 @@ void MainWindow::thdWizardHandler()
 
 
 
-        else if(active_device.contains("№1"))
+        else if (active_device.contains("№1"))
         {
-            if(object_of_measure.contains("Сброс"))
+            if (object_of_measure.contains("Сброс"))
             {
                 ui->WizardTextEdit->setPlainText(comment_to_action);
                 currentActionPushButton = ui->resetHzPushButton;
@@ -1115,7 +1092,7 @@ void MainWindow::thdWizardHandler()
             else
             {
                 /*Если объект операции не содержится в комбо боксе, ошибка составления программы*/
-                if(ui->ReportComboBox->findText(object_of_measure)== -1)
+                if (ui->ReportComboBox->findText(object_of_measure) == -1)
                 {
                     throw ThdWizardParagraphs.curr_num;
                 }
@@ -1129,9 +1106,9 @@ void MainWindow::thdWizardHandler()
         }
 
 
-        else if(active_device.contains("№2"))
+        else if (active_device.contains("№2"))
         {
-            if(object_of_measure.contains("Сброс"))
+            if (object_of_measure.contains("Сброс"))
             {
                 ui->WizardTextEdit->setPlainText(comment_to_action);
                 currentActionPushButton = ui->resetHzPushButton_2;
@@ -1142,7 +1119,7 @@ void MainWindow::thdWizardHandler()
             else
             {
                 /*Если объект операции не содержится в комбо боксе, ошибка составления программы*/
-                if(ui->ReportComboBox_2->findText(object_of_measure) == -1)
+                if (ui->ReportComboBox_2->findText(object_of_measure) == -1)
                 {
                     throw ThdWizardParagraphs.curr_num;
                 }
@@ -1156,7 +1133,7 @@ void MainWindow::thdWizardHandler()
         }
 
 
-        else if(active_device.contains("Зв"))
+        else if (active_device.contains("Зв"))
         {
             ui->WizardTextEdit->setPlainText(comment_to_action);
             currentActionPushButton = ui->starThdButton;
@@ -1187,10 +1164,10 @@ void MainWindow::on_chooseFilePushButton_clicked()
     wizard_filename = QFileDialog::getOpenFileName(this,
                                                    tr("Open .txt"), ".",
                                                    tr(".txt files (*.txt)"));
-    if(!ThdWizardParagraphs.isEmpty()) ThdWizardParagraphs.clear();
+    if (!ThdWizardParagraphs.isEmpty()) ThdWizardParagraphs.clear();
     QFile file(wizard_filename);
     QTextStream in(&file);
-    if(file.open(QIODevice::ReadOnly |QIODevice::Text))
+    if (file.open(QIODevice::ReadOnly |QIODevice::Text))
     {
         while(!in.atEnd())
         {
@@ -1208,7 +1185,7 @@ void MainWindow::updateParagraphsAfterError()
     ThdWizardParagraphs.paragraphs.clear();
     QFile file(wizard_filename);
     QTextStream in(&file);
-    if(file.open(QIODevice::ReadOnly |QIODevice::Text))
+    if (file.open(QIODevice::ReadOnly |QIODevice::Text))
     {
         while(!in.atEnd())
         {
@@ -1219,7 +1196,7 @@ void MainWindow::updateParagraphsAfterError()
 
 void MainWindow::notePerformOfOperation(OPERATION_TYPE type)
 {
-    if(need_to_complete_operation == type)
+    if (need_to_complete_operation == type)
     {
         pass_next = true;
         updateLed();
@@ -1229,27 +1206,26 @@ void MainWindow::notePerformOfOperation(OPERATION_TYPE type)
 
 void MainWindow::on_performPushButton_clicked()
 {
-    if(currentActionPushButton)
+    if (currentActionPushButton)
     {
         currentActionPushButton->animateClick(0);
-        if(pass_next) updateLed();
+        if (pass_next) updateLed();
     }
 }
 
 void MainWindow::on_nextPushButton_clicked()
 {
-    if(pass_next) thdWizardHandler();
+    if (pass_next) thdWizardHandler();
 }
-
-
 
 
 
 void MainWindow::updateLed()
 {
-    if(pass_next) ui->led->setState(true);
+    if (pass_next) ui->led->setState(true);
     else ui->led->setState(false);
 }
+
 
 MainWindow::~MainWindow()
 {

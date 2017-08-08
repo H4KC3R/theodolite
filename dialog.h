@@ -2,12 +2,12 @@
 #define DIALOG_H
 #include <QDialog>
 
-struct starThdData
+struct StarThdData
 {
-QString cirle;
-QString MeasureObj;
-QString Hz_angle;
-QString V_angle;
+    QString cirle;
+    QString MeasureObj;
+    QString Hz_angle;
+    QString V_angle;
 };
 
 
@@ -27,7 +27,7 @@ public:
 private:
     Ui::Dialog *ui;
 signals:
-    void starThdDataReady(starThdData starthd_data);
+    void starThdDataReady(StarThdData starthd_data);
 };
 
 #endif // DIALOG_H

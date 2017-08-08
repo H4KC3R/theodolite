@@ -20,12 +20,12 @@ bool Theodolite::connectLibrary(const QString &filename)
 
 quint32 Theodolite::getInstrumentNumber()
 {
-    if(isConnected())
+    if (isConnected())
     {
         long instrument_number = 0;
         ThdGetInstrumentNo GetInstrumentalNo = (ThdGetInstrumentNo) geocom_orig->resolve("?CSV_GetInstrumentNo@@YAFAAJ@Z");
-        if(GetInstrumentalNo) returnedCode = GetInstrumentalNo(instrument_number);
-        if(returnedCode == GRC_OK) return instrument_number;
+        if (GetInstrumentalNo) returnedCode = GetInstrumentalNo(instrument_number);
+        if (returnedCode == GRC_OK) return instrument_number;
 
     }
     return 0;
@@ -33,15 +33,15 @@ quint32 Theodolite::getInstrumentNumber()
 
 bool Theodolite::enableConnection(COM_PORT port, COM_BAUD_RATE def_br,short nRetries)
 {
-    if(geocom_orig->isLoaded())
+    if (geocom_orig->isLoaded())
     {
         ThdComInit ComInit=(ThdComInit) geocom_orig->resolve("?COM_Init@@YAFXZ");
-        if(ComInit) returnedCode = ComInit();
+        if (ComInit) returnedCode = ComInit();
 
-        if(returnedCode == GRC_OK)
+        if (returnedCode == GRC_OK)
         {
             ThdOpenConnection OpenConnection = (ThdOpenConnection)geocom_orig->resolve("?COM_OpenConnection@@YAFW4COM_PORT@@AAW4COM_BAUD_RATE@@F@Z");
-            if(OpenConnection) returnedCode = OpenConnection(port, def_br, nRetries);
+            if (OpenConnection) returnedCode = OpenConnection(port, def_br, nRetries);
 
             if (returnedCode == GRC_OK)
             {
@@ -63,15 +63,15 @@ bool Theodolite::enableConnection(COM_PORT port, COM_BAUD_RATE def_br,short nRet
 
 bool Theodolite::closeConnection()
 {
-    if(isConnected())
+    if (isConnected())
     {
 
-        ThdCloseConnection CloseConnection=(ThdCloseConnection) geocom_orig->resolve("?COM_CloseConnection@@YAFXZ");
-        if(CloseConnection) returnedCode = CloseConnection();
+        ThdCloseConnection CloseConnection = (ThdCloseConnection) geocom_orig->resolve("?COM_CloseConnection@@YAFXZ");
+        if (CloseConnection) returnedCode = CloseConnection();
         if (returnedCode != GRC_OK) return false;
 
         ThdComEnd ComEnd =(ThdComEnd) geocom_orig->resolve("?COM_End@@YAFXZ");
-        if(ComEnd) returnedCode = ComEnd();
+        if (ComEnd) returnedCode = ComEnd();
         if (returnedCode != GRC_OK) return false;
 
     }
@@ -87,11 +87,11 @@ QString Theodolite::getLastRetMes()
     char message_buffer[255] = {0};
     QString message;
     ThdGetErrorText GetErrorText = (ThdGetErrorText) geocom_orig->resolve("?COM_GetErrorText@@YAFFPAD@Z");
-    if(GetErrorText) GetErrorText(returnedCode, message_buffer);
+    if (GetErrorText) GetErrorText(returnedCode, message_buffer);
 
-    for(int i = 0;i < sizeof(message_buffer); i ++)
+    for (int i = 0;i < sizeof(message_buffer); i ++)
     {
-        if( message_buffer[i])
+        if ( message_buffer[i])
         {
             message += message_buffer[i];
         }
@@ -105,24 +105,24 @@ QString Theodolite::getLastRetMes()
 MeasuresFromTheodolite Theodolite::startMeasures(quint16 amount_of_measures, MES_TYPE angle_type)
 {
     MeasuresFromTheodolite measure_list(amount_of_measures);
-    if(isConnected())
+    if (isConnected())
     {
         const constexpr double trans_to_rad=180/M_PI;
         TMC_ANGLE raw_measures;
         TheodoliteMeasure thd_measure;
         ThdGetAngle GetAngle = (ThdGetAngle) geocom_orig->resolve("?TMC_GetAngle@@YAFAAUTMC_ANGLE@@W4TMC_INCLINE_PRG@@@Z");
-        if(GetAngle)
-            for(auto i = 0;i < amount_of_measures;i++)
+        if (GetAngle)
+            for (auto i = 0;i < amount_of_measures;i++)
             {
                 returnedCode = GetAngle(raw_measures, TMC_AUTO_INC);
                 if (returnedCode == GRC_OK)
                 {
-                    if(angle_type == THD_MES)
+                    if (angle_type == THD_MES)
                     {
                         thd_measure.setMeasureData(raw_measures.dHz*trans_to_rad,raw_measures.dV*trans_to_rad,raw_measures.eFace);
                         measure_list[i] = thd_measure;
                     }
-                    else if(angle_type == THD_INCL)
+                    else if (angle_type == THD_INCL)
                     {
                         thd_measure.setMeasureData(raw_measures.Incline.dCrossIncline*trans_to_rad,raw_measures.Incline.dLengthIncline*trans_to_rad,raw_measures.eFace);
                         measure_list[i] = thd_measure;
@@ -143,22 +143,22 @@ MeasuresFromTheodolite Theodolite::startMeasures(quint16 amount_of_measures, MES
 TheodoliteMeasure Theodolite::makeOneMeasure(MES_TYPE angle_type)
 {
     TheodoliteMeasure thd_measure;
-    if(isConnected())
+    if (isConnected())
     {
         TMC_ANGLE raw_measures;
         const constexpr double trans_to_rad = 180/M_PI;
 
         ThdGetAngle GetAngle = (ThdGetAngle) geocom_orig->resolve("?TMC_GetAngle@@YAFAAUTMC_ANGLE@@W4TMC_INCLINE_PRG@@@Z");
-        if(GetAngle)
+        if (GetAngle)
             returnedCode = GetAngle(raw_measures, TMC_AUTO_INC);
 
         if (returnedCode == GRC_OK)
         {
-            if(angle_type == THD_MES)
+            if (angle_type == THD_MES)
             {
                 thd_measure.setMeasureData(raw_measures.dHz*trans_to_rad,raw_measures.dV*trans_to_rad,raw_measures.eFace);
             }
-            else if(angle_type==THD_INCL)
+            else if (angle_type==THD_INCL)
             {
                 thd_measure.setMeasureData(raw_measures.Incline.dCrossIncline*trans_to_rad,raw_measures.Incline.dLengthIncline*trans_to_rad,raw_measures.eFace);
             }
@@ -172,17 +172,17 @@ TheodoliteMeasure Theodolite::makeOneMeasure(MES_TYPE angle_type)
 
 bool Theodolite::resetHz(const double& HzOrient)
 {
-    if(isConnected())
+    if (isConnected())
     {
         ThdDoMeasure DoMeasure = (ThdDoMeasure) geocom_orig->resolve("?TMC_DoMeasure@@YAFW4TMC_MEASURE_PRG@@@Z");
-        if(DoMeasure) returnedCode = DoMeasure(TMC_CLEAR);
+        if (DoMeasure) returnedCode = DoMeasure(TMC_CLEAR);
         if (returnedCode != GRC_OK)
         {
             error_report(getLastRetMes());
             return false;
         }
         ThdSetOrientation SetOrientationHz=(ThdSetOrientation) geocom_orig->resolve("?TMC_SetOrientation@@YAFN@Z");
-        if(SetOrientationHz) returnedCode = SetOrientationHz(HzOrient);
+        if (SetOrientationHz) returnedCode = SetOrientationHz(HzOrient);
         if (returnedCode != GRC_OK)
         {
             error_report(getLastRetMes());

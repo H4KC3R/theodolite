@@ -31,7 +31,7 @@ public:
 
         bool isEmpty() const;
         static bool checkStringGMSAngle(const QString& );
-        friend QDebug operator<< (QDebug d, const GMS &data);
+        friend QDebug operator << (QDebug d, const GMS &data);
 private:
     qint32 gradus;
     qint32 minutes;
