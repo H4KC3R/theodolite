@@ -22,54 +22,51 @@ class Theodolite:public QObject
     Q_OBJECT
     typedef GRC_TYPE (*ThdComInit)(void);
     typedef GRC_TYPE (*ThdOpenConnection)(COM_PORT ePort,
-                                         COM_BAUD_RATE &BaudRate,
+                                         COM_BAUD_RATE& BaudRate,
                                          short nRetries);
     typedef GRC_TYPE (*ThdComEnd)();
     typedef GRC_TYPE (*ThdCloseConnection)();
     typedef GRC_TYPE (*ThdGetErrorText)(GRC_TYPE RetCode,
-                                      char *szErrText);
-    typedef GRC_TYPE (*ThdGetAngle)(TMC_ANGLE       &Angle,
+                                      char* szErrText);
+    typedef GRC_TYPE (*ThdGetAngle)(TMC_ANGLE& Angle,
                                    TMC_INCLINE_PRG eMode);
 
     typedef GRC_TYPE (*ThdDoMeasure) (TMC_MEASURE_PRG Command);
     typedef GRC_TYPE (*ThdSetOrientation) (double HzOrient);
-    typedef GRC_TYPE (*ThdGetInstrumentNo)(long &SerialNo);
+    typedef GRC_TYPE (*ThdGetInstrumentNo)(long& SerialNo);
 public:
 
 
-    explicit Theodolite(const GRC_TYPE rc=GRC_UNDEFINED, bool cnct=false);
-    Theodolite(const Theodolite&)                   =delete;
-    Theodolite(Theodolite&&)                        =delete;
-    Theodolite& operator=(const Theodolite&)        =delete;
-    Theodolite& operator=(Theodolite&&)             =delete;
+    explicit Theodolite(const GRC_TYPE rc = GRC_UNDEFINED, bool cnct = false);
+    Theodolite(const Theodolite&)                   = delete;
+    Theodolite(Theodolite&&)                        = delete;
+    Theodolite& operator=(const Theodolite&)        = delete;
+    Theodolite& operator=(Theodolite&&)             = delete;
 
 
     bool connectLibrary(const QString& );
-    bool enableConnection(COM_PORT port, COM_BAUD_RATE def_br = COM_BAUD_9600,short nRetries = 4);
+    bool connect(COM_PORT port, COM_BAUD_RATE def_br = COM_BAUD_9600, short nRetries = 4);
     bool closeConnection();
     QString getLastRetMes();
-    MeasuresFromTheodolite startMeasures(quint16, MES_TYPE);
+    MeasuresFromTheodolite startMeasures(qint32, MES_TYPE);
     TheodoliteMeasure makeOneMeasure(MES_TYPE);
     bool resetHz(const double&);
-    bool isConnected() const {return connect_state;}
-    bool checkCompensator(const double &);
-    quint32 getInstrumentNumber();
+    bool isConnected() const {return connectState;}
+    bool checkCompensator(const double&);
+    qint32 getInstrumentNumber();
     ~Theodolite();
 
 signals:
-    void connected(QString message);
-    void error_report(QString er_message);
+    void connected(const QString& message);
+    void errorReport(const QString& er_message);
 
 
 private:
+    static const constexpr double transToRad = 180 / M_PI;
     GRC_TYPE returnedCode;
-    bool connect_state;
-    bool in_progress;
-    QLibrary* geocom_orig;
-
-
-
-
+    bool connectState;
+    bool inProgress;
+    QLibrary* geocomOrig;
 
 };
 

@@ -10,9 +10,9 @@ Dialog::Dialog(QWidget *parent) :
     QStringList star_thd_circle;
     star_thd_circle << "КРУГ(КЛ)" << "КРУГ(КП)";
     ui->CircleComboBox->insertItems(0, star_thd_circle);
-    QStringList star_thd_measure;
-    star_thd_measure << "Прибор" << "Теодолит №1" << "Теодолит №2";
-    ui->MeasureObjComboBox->insertItems(0, star_thd_measure);
+    QStringList star_thdMeasure;
+    star_thdMeasure << "Прибор" << "Теодолит №1" << "Теодолит №2";
+    ui->MeasureObjComboBox->insertItems(0, star_thdMeasure);
 
 
 
@@ -32,8 +32,8 @@ void Dialog::getData()
     StarThdData thd_data;
     thd_data.cirle = ui->CircleComboBox->currentText();
     thd_data.MeasureObj= ui->MeasureObjComboBox->currentText();
-    thd_data.Hz_angle = ui->HzAngleLineEdit->text();
-    thd_data.V_angle = ui->VAngleLineEdit->text();
+    thd_data.HzAngle = ui->HzAngleLineEdit->text();
+    thd_data.VAngle = ui->VAngleLineEdit->text();
     emit starThdDataReady(thd_data);
 }
 Dialog::~Dialog()

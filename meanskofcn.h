@@ -10,58 +10,58 @@
 
 namespace meanSkoFcn
 {
-enum ANGLE_TYPE
+enum angleType
 {
     HZ_A,
     V_A
 };
 
-double calc_circle_mean(const MeasuresFromTheodolite& measure_vector,const ANGLE_TYPE& type)
+double calcCircleMean(const MeasuresFromTheodolite& measureVector,const angleType& type)
 {
-    const double trans_to_rad = M_PI/180;
+    const double transToRad = M_PI/180;
     double EV = 0;
-    double sum_cos = 0;
-    double sum_sin = 0;
+    double sumCos = 0;
+    double sumSin = 0;
 
     switch (type) {
     case HZ_A:
-        for (const auto&i : measure_vector)
+        for (const auto&i : measureVector)
         {
-            sum_cos += cos(i.getHzAngle() * trans_to_rad);
-            sum_sin += sin(i.getHzAngle() * trans_to_rad);
+            sumCos += cos(i.getHzAngle() * transToRad);
+            sumSin += sin(i.getHzAngle() * transToRad);
         }
         break;
     case V_A:
-        for (const auto&i : measure_vector)
+        for (const auto&i : measureVector)
         {
-            sum_cos += cos(i.getVAngle() * trans_to_rad);
-            sum_sin += sin(i.getVAngle() * trans_to_rad);
+            sumCos += cos(i.getVAngle() * transToRad);
+            sumSin += sin(i.getVAngle() * transToRad);
         }
         break;
     }
-    EV = atan2(sum_sin,sum_cos);
+    EV = atan2(sumSin,sumCos);
     return EV;
 }
 
 
 
-double calc_circle_sko(const MeasuresFromTheodolite& measure_vector,const double& EV,const ANGLE_TYPE& type)
+double calcCircleSko(const MeasuresFromTheodolite& measureVector,const double& EV,const angleType& type)
 {
-    const double trans_to_rad = M_PI/180;
-    QVector <double> asinsin(measure_vector.size());
+    const double transToRad = M_PI/180;
+    QVector <double> asinsin(measureVector.size());
     double sko = 0;
 
     switch (type) {
     case HZ_A:
         for (int i = 0;i < asinsin.size();i++)
         {
-            asinsin[i] = asin(sin(measure_vector[i].getHzAngle()*trans_to_rad));
+            asinsin[i] = asin(sin(measureVector[i].getHzAngle() * transToRad));
         }
         break;
     case V_A:
         for (int i = 0;i < asinsin.size();i++)
         {
-            asinsin[i] = asin(sin(measure_vector[i].getVAngle()*trans_to_rad));
+            asinsin[i] = asin(sin(measureVector[i].getVAngle() * transToRad));
         }
         break;
     }
@@ -70,51 +70,51 @@ double calc_circle_sko(const MeasuresFromTheodolite& measure_vector,const double
         double dif = pow((i - EV), 2);
         sko += dif;
     }
-    qint32 countOfMeasures = measure_vector.size();
+    qint32 countOfMeasures = measureVector.size();
     sko = sko / countOfMeasures;
     sko = sqrt(sko);
     return sko;
 }
 
-double calc_mean(const MeasuresFromTheodolite& measure_vector,const ANGLE_TYPE& type)
+double calcMean(const MeasuresFromTheodolite& measureVector,const angleType& type)
 {
     double sum=0;
     switch (type) {
     case HZ_A:
-        sum = std::accumulate(measure_vector.begin(),measure_vector.end(),0.0,[](auto &a,auto &b){return a+b.getHzAngle();});
+        sum = std::accumulate(measureVector.begin(), measureVector.end(), 0.0, [](auto &a, auto &b){return a + b.getHzAngle();});
         break;
     case V_A:
-        sum = std::accumulate(measure_vector.begin(),measure_vector.end(),0.0,[](auto &a,auto &b){return a+b.getVAngle();});
+        sum = std::accumulate(measureVector.begin(), measureVector.end(), 0.0, [](auto &a, auto &b){return a + b.getVAngle();});
         break;
     }
-    qint32 countOfMeasures = measure_vector.size();
+    qint32 countOfMeasures = measureVector.size();
     double EV = sum / countOfMeasures;
     return EV;
 }
 
-double calc_sko(const MeasuresFromTheodolite& measure_vector,const double& EV, const ANGLE_TYPE& type)
+double calcSko(const MeasuresFromTheodolite& measureVector, const double& EV, const angleType& type)
 {
     double sko = 0;
     switch (type) {
     case HZ_A:
 
-        for (auto &i : measure_vector)
+        for (auto &i : measureVector)
         {
-            double dif = pow((i.getHzAngle()-EV),2);
+            double dif = pow((i.getHzAngle() - EV), 2);
             sko += dif;
         }
         break;
     case V_A:
 
-        for (auto &i : measure_vector)
+        for (auto &i : measureVector)
         {
-            double dif = pow((i.getVAngle()-EV),2);
+            double dif = pow((i.getVAngle() - EV), 2);
             sko += dif;
         }
         break;
     }
-    qint32 countOfMeasures = measure_vector.size();
-    sko = sko/countOfMeasures;
+    qint32 countOfMeasures = measureVector.size();
+    sko = sko / countOfMeasures;
     sko = sqrt(sko);
     return sko;
 }
@@ -125,45 +125,45 @@ double calc_sko(const MeasuresFromTheodolite& measure_vector,const double& EV, c
 QString zeroPadding(const double &number, const int &precision)
 {
 
-    QString str_number = QString::number(number,'f',precision);
+    QString strNumber = QString::number(number,'f',precision);
 
     if (number < 0)
     {
-        return str_number;
+        return strNumber;
     }
 
     if (number < 100 && number > 9)
     {
-        str_number = "0"+str_number;
-        return str_number;
+        strNumber = "0"+strNumber;
+        return strNumber;
     }
     if (number < 10)
     {
-        str_number="00" + str_number;
-        return str_number;
+        strNumber="00" + strNumber;
+        return strNumber;
     }
-    return str_number;
+    return strNumber;
 }
 
 QString zeroPadding(const int &number)
 {
-    QString str_number = QString::number(number);
+    QString strNumber = QString::number(number);
 
     if (number < 0)
     {
-        return str_number;
+        return strNumber;
     }
 
     if (number < 100 && number > 9)
     {
-        str_number = "0" + str_number;
-        return str_number;
+        strNumber = "0" + strNumber;
+        return strNumber;
     }
     if (number < 10)
     {
-        str_number="00" + str_number;
-        return str_number;
+        strNumber="00" + strNumber;
+        return strNumber;
     }
-    return str_number;
+    return strNumber;
 }
 #endif // MEANSKOFCN_H

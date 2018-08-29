@@ -15,13 +15,13 @@ public:
         ~GMS()                            =default;
         double transToGrad();
         double transToRad();
-        constexpr qint32 getGradus() const{
+        qint32 getGradus() const{
             return gradus;
         }
-        constexpr qint32 getMinutes() const{
+        qint32 getMinutes() const{
             return minutes;
         }
-        constexpr double getSeconds() const{
+        double getSeconds() const{
             return seconds;
         }
         void setAngleValue(const double&);

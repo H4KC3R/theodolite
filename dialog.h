@@ -6,8 +6,8 @@ struct StarThdData
 {
     QString cirle;
     QString MeasureObj;
-    QString Hz_angle;
-    QString V_angle;
+    QString HzAngle;
+    QString VAngle;
 };
 
 
