@@ -26,6 +26,9 @@
 #include <future>
 #include <QPainter>
 #include <QPen>
+#include <QtConcurrent/QtConcurrent>
+#include <QFuture>
+#include <QSharedPointer>
 
 
 
@@ -51,13 +54,13 @@ struct DataFromThreadtoProtocol
 {
     GMS skoHz;
     GMS skoV;
-    QString protocol_text;
+    QString protocolText;
 
     bool isEmpty() const
     {
         return skoHz.isEmpty()
                 && skoV.isEmpty()
-                && protocol_text.isEmpty();
+                && protocolText.isEmpty();
     }
 };
 
@@ -92,7 +95,7 @@ struct MeasureCharacteristics
 
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -124,13 +127,11 @@ private:
 
     void setStyle();
 
-    void connectTheodolit();
+    void makeMeasureMain(QSharedPointer<Theodolite> thd, QComboBox* reportComboBox, bool save);
 
-    void makeMeasureMain();
+    void parallelHandlerNoSave();
 
-    void parallelHandlerNosave();
-
-    void parallelHandlerDosave();
+    void parallelHandlerDoSave();
 
     void resetOrientationHandler();
 
@@ -164,34 +165,30 @@ private:
 
     void dataFromThreadHandler(const DFT& data);
 
-    bool prepareParralelMSeasure();
+    bool prepareMeasure(QTextEdit* edit);
 
-    void parallelConnection();
+    void connectTheodolite(Theodolite* thd, QTextEdit* edit, QComboBox* portComboBox);
 
     void reportAboutConnection(const QString &message);
 
     void reportAboutError(const QString& errorMessage);
 
-    void setDataFromThread(const DFT& data, QTextEdit* text_edit, QLineEdit* meanHz_line_edit, QLineEdit* meanV_line_edit, QLineEdit* skoHz_line_edit
-                              , QLineEdit* skoV_line_edit, QLineEdit* SKO3xHz_line_edit, QLineEdit* SKO3xV_line_edit);
+    void setDataFromThread(const DFT& data, QTextEdit* textEdit,
+                           QLineEdit* meanhzLineEdit, QLineEdit* meanvLineEdit, QLineEdit* skohzLineEdit
+                           , QLineEdit* skovLineEdit, QLineEdit* SKO3xHzLineEdit, QLineEdit* SKO3xVLineEdit);
 
-    DFTP parralelMakeMeasureCheck(QSharedPointer <Theodolite> theodolite, QComboBox* combo_box, const int count_of_measures);
-
-    void parallelMakeMeasureUncheck(QSharedPointer <Theodolite> theodolite, QComboBox* combo_box, const int count_of_measures, bool do_save);
+    DFTP parallelMeasure(QSharedPointer <Theodolite> theodolite, QComboBox* comboBox, const int countOfMeasures);
 
     void resetOrientation(QSharedPointer<Theodolite>, QLineEdit*, QTextEdit*);
 
-    void makeMeasure(bool do_save, QSharedPointer <Theodolite> theodolite, QTextEdit* text_edit, QComboBox* combo_box
-                     ,QLineEdit* meanHz_line_edit,QLineEdit* meanV_line_edit,QLineEdit* skoHz_line_edit
-                     ,QLineEdit* skoV_line_edit,QLineEdit*SKO3xHz_line_edit,QLineEdit* SKO3xV_line_edit);
+    void saveStarThdData(StarThdData starData);
 
-    void saveStarThdData(StarThdData star_data);
+    QString makeProtocol(const QString& deviceName, double circle, const QString& measureType, const MeasureCharacteristics& measChrc,
+                         const GMS& EvHzAngle, const GMS& EvVangle, const GMS& skoHzAngle, const GMS& skoVAngle);
 
-    QString makeProtocol(const QString& deviceName, double circle, const QString& measureType, const MeasureCharacteristics& meas_chrc,
-                      const GMS& EV_hz_angle, const GMS& EV_v_angle, const GMS& sko_hz_angle, const GMS& sko_v_angle);
     QString getDeviceName(QSharedPointer <Theodolite> theodolite);
 
-    void saveProtocolText(const QString& protocol_text);
+    void saveProtocolText(const QString& protocolText);
 
     void saveSettings();
 
@@ -202,6 +199,8 @@ private:
     void updateParagraphsAfterError();
 
     void notePerformOfOperation(enum OPERATION_TYPE type);
+
+    void trySaveProtocol(bool save);
 
 
     Ui::MainWindow *ui;
@@ -221,13 +220,16 @@ private:
     bool measuresStarted = false;    //начаты ли измерений с записью в файл
     bool passNext = false;   //выполнена ли текущая операция, можно ли двигаться дальше
     qint32 needToCompeleOperation = 0;   //тип операции, которую нужно выполнить
-
+    QFutureWatcher <DFTP> watcher;
 
 
 signals:
     void readyDataFromThread(DFT data);
 
+private slots:
+    void on_ConnectButton_clicked();
 
+    void on_ConnectButton_2_clicked();
 };
 
 

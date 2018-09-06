@@ -27,7 +27,7 @@ public:
 private:
     Ui::Dialog *ui;
 signals:
-    void starThdDataReady(StarThdData starthd_data);
+    void starThdDataReady(StarThdData starthdData);
 };
 
 #endif // DIALOG_H

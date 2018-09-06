@@ -105,14 +105,14 @@ bool GMS::checkStringGMSAngle(const QString& angle_string)
     {
         return false;
     }
-    QStringList split_angle_string = angle_string.split(" ");
+    QStringList splitAngleString = angle_string.split(" ");
 
-    if (split_angle_string.size() < 3)
+    if (splitAngleString.size() < 3)
     {
         return false;
     }
-    qint32 minutes = split_angle_string.at(1).toInt();
-    double seconds = split_angle_string.at(2).toDouble();
+    qint32 minutes = splitAngleString.at(1).toInt();
+    double seconds = splitAngleString.at(2).toDouble();
 
     if (minutes > 60
             || minutes < 0
