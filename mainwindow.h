@@ -202,6 +202,8 @@ private:
 
     void trySaveProtocol(bool save);
 
+    void configurateOperationOneThd(const QString& commentToAction, OPERATION_TYPE type, QPushButton* currentButton);
+
 
     Ui::MainWindow *ui;
     std::mutex measureMutex;

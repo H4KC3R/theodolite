@@ -545,8 +545,7 @@ void MainWindow::parallelHandlerDoSave()
     }
 }
 
-/*так как работать с УИ в потоке нехорошо, сигналим данные для него в обработчик, который вызывает функцию, которая эти данные на УИ
-выведет*/
+
 void MainWindow::dataFromThreadHandler(const DFT& data)
 {
     if (data.deviceName == theodolite1->objectName())
@@ -738,11 +737,18 @@ void MainWindow::saveProtocolText(const QString& protocolText)
     if (data.open(QFile::WriteOnly | QFile::Append | QIODevice::Text))
     {
         QTextStream out(&data);
-        out<<protocolText;
+        out << protocolText;
     }
 }
 
-
+void MainWindow::configurateOperationOneThd(const QString& commentToAction, OPERATION_TYPE type, QPushButton* currentButton)
+{
+    ui->WizardTextEdit->setPlainText(commentToAction);
+    currentActionPushButton = currentButton;
+    needToCompeleOperation = type;
+    passNext = false;
+    updateLed();
+}
 
 void MainWindow::thdWizardHandler()
 {
@@ -787,35 +793,32 @@ void MainWindow::thdWizardHandler()
             passNext = true;
             updateLed();
         }
-
-
-        else if (activeDevice.contains("Параллельно"))
+        else if (activeDevice.toLower().contains("параллельно"))
         {
             ui->WizardTextEdit->setPlainText(commentToAction);
-            if (objectOfMeasure.contains("Компенсатор"))
+            if (objectOfMeasure.toLower().contains("компенсатор"))
             {
-
                 ui->ReportComboBox->setCurrentText(objectOfMeasure);
                 ui->ReportComboBox_2->setCurrentText(objectOfMeasure);
                 currentActionPushButton = ui->parallelMesAndSaveButton;
                 needToCompeleOperation = MEASURE_PARRALEL;
             }
-            else if (objectOfMeasure.contains("друг"))
+            else if (objectOfMeasure.toLower().contains("друг"))
             {
                 ui->ReportComboBox->setCurrentText("Теодолит №2");
                 ui->ReportComboBox_2->setCurrentText("Теодолит №1");
                 currentActionPushButton = ui->parallelMesAndSaveButton;
                 needToCompeleOperation = MEASURE_PARRALEL;
             }
-            else if (objectOfMeasure.contains("Сброс"))
+            else if (objectOfMeasure.toLower().contains("cброс"))
             {
                 currentActionPushButton = ui->parallelResetHzPushButton;
                 needToCompeleOperation = RESET_HZ_PARRALEL;
             }
             else
             {
-                if (ui->ReportComboBox->findText(objectOfMeasure.section(',',0,0)) != -1
-                        && ui->ReportComboBox_2->findText(objectOfMeasure.section(',',1,1)) != -1)
+                if (ui->ReportComboBox->findText(objectOfMeasure.section(',', 0, 0)) != -1
+                        && ui->ReportComboBox_2->findText(objectOfMeasure.section(',', 1, 1)) != -1)
                 {
                     ui->ReportComboBox->setCurrentText(objectOfMeasure.section(',', 0, 0));
                     ui->ReportComboBox_2->setCurrentText(objectOfMeasure.section(',', 1, 1));
@@ -832,13 +835,9 @@ void MainWindow::thdWizardHandler()
         }
         else if (activeDevice.contains("№1"))
         {
-            if (objectOfMeasure.contains("Сброс"))
+            if (objectOfMeasure.toLower().contains("cброс"))
             {
-                ui->WizardTextEdit->setPlainText(commentToAction);
-                currentActionPushButton = ui->resetHzPushButton;
-                needToCompeleOperation = RESET_HZ_FIRST_THD;
-                passNext = false;
-                update();
+                configurateOperationOneThd(commentToAction, RESET_HZ_FIRST_THD, ui->resetHzPushButton);
             }
             else
             {
@@ -847,23 +846,16 @@ void MainWindow::thdWizardHandler()
                 {
                     throw ThdWizardParagraphs.currNum;
                 }
+
                 ui->ReportComboBox->setCurrentText(objectOfMeasure);
-                ui->WizardTextEdit->setPlainText(commentToAction);
-                currentActionPushButton = ui->mesAndSaveButton;
-                needToCompeleOperation = MEASURE_ONE_THD;
-                passNext = false;
-                updateLed();
+                configurateOperationOneThd(commentToAction, MEASURE_ONE_THD, ui->mesAndSaveButton);
             }
         }
         else if (activeDevice.contains("№2"))
         {
-            if (objectOfMeasure.contains("Сброс"))
+            if (objectOfMeasure.toLower().contains("cброс"))
             {
-                ui->WizardTextEdit->setPlainText(commentToAction);
-                currentActionPushButton = ui->resetHzPushButton_2;
-                needToCompeleOperation = RESET_HZ_SECOND_THD;
-                passNext = false;
-                updateLed();
+                configurateOperationOneThd(commentToAction, RESET_HZ_SECOND_THD, ui->resetHzPushButton_2);
             }
             else
             {
@@ -873,22 +865,14 @@ void MainWindow::thdWizardHandler()
                     throw ThdWizardParagraphs.currNum;
                 }
                 ui->ReportComboBox_2->setCurrentText(objectOfMeasure);
-                ui->WizardTextEdit->setPlainText(commentToAction);
-                currentActionPushButton = ui->mesAndSaveButton_2;
-                needToCompeleOperation = MEASURE_ONE_THD;
-                passNext = false;
-                updateLed();
+                configurateOperationOneThd(commentToAction, MEASURE_ONE_THD, ui->mesAndSaveButton_2);
             }
         }
 
 
-        else if (activeDevice.contains("Зв"))
+        else if (activeDevice.toLower().contains("зв"))
         {
-            ui->WizardTextEdit->setPlainText(commentToAction);
-            currentActionPushButton = ui->starThdButton;
-            needToCompeleOperation = MEASURE_STAR_THD;
-            passNext = false;
-            updateLed();
+            configurateOperationOneThd(commentToAction, MEASURE_STAR_THD, ui->starThdButton);
         }
         else
         {
@@ -900,7 +884,7 @@ void MainWindow::thdWizardHandler()
 
     catch (qint32 parghrNumber)
     {
-        ui->WizardTextEdit->setPlainText("Ошибка в строке "+QString::number(parghrNumber+1));
+        ui->WizardTextEdit->setPlainText("Ошибка в строке " + QString::number(parghrNumber + 1));
         wizardError = true;
         passNext = true;
         updateLed();

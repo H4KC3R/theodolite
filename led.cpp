@@ -41,8 +41,8 @@ setDiameter(double diameter)
 {
     diameter_ = diameter;
 
-    pixX_ = round(double(height())/heightMM());
-    pixY_ = round(double(width())/widthMM());
+    pixX_ = round(double(height()) / heightMM());
+    pixY_ = round(double(width()) / widthMM());
 
     diamX_ = diameter_*pixX_;
     diamY_ = diameter_*pixY_;
