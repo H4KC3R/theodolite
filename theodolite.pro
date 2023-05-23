@@ -5,6 +5,8 @@
 #-------------------------------------------------
 
 QT  += core gui
+QT += core5compat
+QT += gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
