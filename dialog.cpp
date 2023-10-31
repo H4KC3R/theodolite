@@ -14,10 +14,8 @@ Dialog::Dialog(QWidget *parent) :
     starThdMeasure << "Прибор" << "Теодолит №1" << "Теодолит №2";
     ui->MeasureObjComboBox->insertItems(0, starThdMeasure);
 
-
-
-    QRegExp rxAngle("[0-3]{1}[0-9]{2} [0-9]{2} [0-9]{2}");
-    QValidator *gmsValidator = new QRegExpValidator(rxAngle, this);
+    QRegularExpression rxAngle("[0-3]{1}[0-9]{2} [0-9]{2} [0-9]{2}");
+    QValidator *gmsValidator = new QRegularExpressionValidator(rxAngle, this);
 
     ui->HzAngleLineEdit->setValidator(gmsValidator);
     ui->VAngleLineEdit->setValidator(gmsValidator);

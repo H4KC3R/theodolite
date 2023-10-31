@@ -2,7 +2,6 @@
 #define DIALOG_H
 #include <QDialog>
 #include <QRegularExpression>
-#include <QRegExp>
 
 struct StarThdData
 {

@@ -75,8 +75,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::initializeValidators()
 {
-    QRegExp rxAngle("[0-3]{1}[0-9]{2} [0-9]{2} [0-9]{2}");
-    QValidator *gmsValidator = new QRegExpValidator(rxAngle, this);
+    QRegularExpression rxAngle("[0-3]{1}[0-9]{2} [0-9]{2} [0-9]{2}");
+    QValidator *gmsValidator = new QRegularExpressionValidator(rxAngle, this);
     ui->HzAngleValueLineEdit->setValidator(gmsValidator);
     ui->HzAngleValueLineEdit_2->setValidator(gmsValidator);
 
@@ -474,7 +474,7 @@ void MainWindow::makeMeasureMain(QSharedPointer<Theodolite> thd, QComboBox* repo
     {
         trySaveProtocol(save);
     });
-    auto future = QtConcurrent::run(this, &MainWindow::parallelMeasure, thd, reportComboBox, ui->MesCountSpinBox->value());
+    auto future = QtConcurrent::run(&MainWindow::parallelMeasure, this, thd, reportComboBox, ui->MesCountSpinBox->value());
     watcher.setFuture(future);
 }
 
@@ -491,8 +491,8 @@ void MainWindow::parallelHandlerNoSave()
         if (theodolite1->isConnected()
                 && theodolite2->isConnected())
         {
-            QtConcurrent::run( this, &MainWindow::parallelMeasure, theodolite1, ui->ReportComboBox, ui->MesCountSpinBox->value());
-            QtConcurrent::run(this,  &MainWindow::parallelMeasure, theodolite2, ui->ReportComboBox_2, ui->MesCountSpinBox->value());
+            QtConcurrent::run(&MainWindow::parallelMeasure,  this, theodolite1, ui->ReportComboBox, ui->MesCountSpinBox->value());
+            QtConcurrent::run(&MainWindow::parallelMeasure, this,  theodolite2, ui->ReportComboBox_2, ui->MesCountSpinBox->value());
         }
     }
 
@@ -519,8 +519,8 @@ void MainWindow::parallelHandlerDoSave()
             || !theodolite2->isConnected())
         return;
 
-    auto thd1Future = QtConcurrent::run(this, &MainWindow::parallelMeasure, theodolite1, ui->ReportComboBox, ui->MesCountSpinBox->value());
-    auto thd2Future = QtConcurrent::run(this, &MainWindow::parallelMeasure,  theodolite2, ui->ReportComboBox_2, ui->MesCountSpinBox->value());
+    auto thd1Future = QtConcurrent::run(&MainWindow::parallelMeasure, this, theodolite1, ui->ReportComboBox, ui->MesCountSpinBox->value());
+    auto thd2Future = QtConcurrent::run(&MainWindow::parallelMeasure,  this, theodolite2, ui->ReportComboBox_2, ui->MesCountSpinBox->value());
 
     DFTP thd1Data = thd1Future.result();
     DFTP thd2Data = thd2Future.result();
@@ -941,7 +941,7 @@ void MainWindow::on_performPushButton_clicked()
 {
     if (currentActionPushButton)
     {
-        currentActionPushButton->animateClick(0);
+        currentActionPushButton->animateClick();
         if (passNext)
             updateLed();
     }
