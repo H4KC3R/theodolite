@@ -474,7 +474,7 @@ void MainWindow::makeMeasureMain(QSharedPointer<Theodolite> thd, QComboBox* repo
     {
         trySaveProtocol(save);
     });
-    auto future = QtConcurrent::run(&MainWindow::parallelMeasure, this, thd, reportComboBox, ui->MesCountSpinBox->value());
+    auto future = QtConcurrent::run(this, &MainWindow::parallelMeasure, thd, reportComboBox, ui->MesCountSpinBox->value());
     watcher.setFuture(future);
 }
 
@@ -491,8 +491,8 @@ void MainWindow::parallelHandlerNoSave()
         if (theodolite1->isConnected()
                 && theodolite2->isConnected())
         {
-            QtConcurrent::run(&MainWindow::parallelMeasure,  this, theodolite1, ui->ReportComboBox, ui->MesCountSpinBox->value());
-            QtConcurrent::run(&MainWindow::parallelMeasure, this,  theodolite2, ui->ReportComboBox_2, ui->MesCountSpinBox->value());
+            QtConcurrent::run(this, &MainWindow::parallelMeasure, theodolite1, ui->ReportComboBox, ui->MesCountSpinBox->value());
+            QtConcurrent::run(this, &MainWindow::parallelMeasure, theodolite2, ui->ReportComboBox_2, ui->MesCountSpinBox->value());
         }
     }
 
@@ -519,8 +519,8 @@ void MainWindow::parallelHandlerDoSave()
             || !theodolite2->isConnected())
         return;
 
-    auto thd1Future = QtConcurrent::run(&MainWindow::parallelMeasure, this, theodolite1, ui->ReportComboBox, ui->MesCountSpinBox->value());
-    auto thd2Future = QtConcurrent::run(&MainWindow::parallelMeasure,  this, theodolite2, ui->ReportComboBox_2, ui->MesCountSpinBox->value());
+    auto thd1Future = QtConcurrent::run(this, &MainWindow::parallelMeasure, theodolite1, ui->ReportComboBox, ui->MesCountSpinBox->value());
+    auto thd2Future = QtConcurrent::run(this, &MainWindow::parallelMeasure, theodolite2, ui->ReportComboBox_2, ui->MesCountSpinBox->value());
 
     DFTP thd1Data = thd1Future.result();
     DFTP thd2Data = thd2Future.result();
